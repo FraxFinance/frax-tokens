@@ -7,12 +7,12 @@ settings:
 importers:
   .:
     dependencies:
-      "@openzeppelin/contracts":
-        specifier: npm:@openzeppelin/contracts@5.3.0
-        version: 5.3.0
       "@openzeppelin/contracts-5.2.0":
         specifier: npm:@openzeppelin/contracts@5.2.0
         version: "@openzeppelin/contracts@5.2.0"
+      "@openzeppelin/contracts-upgradeable-5.2.0":
+        specifier: npm:@openzeppelin/contracts-upgradeable@5.2.0
+        version: "@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.4.0)"
       ds-test:
         specifier: github:dapphub/ds-test
         version: https://codeload.github.com/dapphub/ds-test/tar.gz/e282159d5170298eb2455a6c05280ab5a73a4ef0
@@ -101,13 +101,15 @@ packages:
     resolution:
       { integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ== }
 
+  "@openzeppelin/contracts-upgradeable@5.2.0":
+    resolution:
+      { integrity: sha512-mZIu9oa4tQTlGiOJHk6D3LdJlqFqF6oNOSn6S6UVJtzfs9UsY9/dhMEbAVTwElxUtJnjpf6yA062+oBp+eOyPg== }
+    peerDependencies:
+      "@openzeppelin/contracts": 5.2.0
+
   "@openzeppelin/contracts@5.2.0":
     resolution:
       { integrity: sha512-bxjNie5z89W1Ea0NZLZluFh8PrFNn9DH8DQlujEok2yjsOlraUPKID5p1Wk3qdNbf6XkQ1Os2RvfiHrrXLHWKA== }
-
-  "@openzeppelin/contracts@5.3.0":
-    resolution:
-      { integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA== }
 
   "@openzeppelin/contracts@5.4.0":
     resolution:
@@ -1198,9 +1200,11 @@ snapshots:
       "@jridgewell/resolve-uri": 3.1.2
       "@jridgewell/sourcemap-codec": 1.5.4
 
-  "@openzeppelin/contracts@5.2.0": {}
+  "@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.4.0)":
+    dependencies:
+      "@openzeppelin/contracts": 5.4.0
 
-  "@openzeppelin/contracts@5.3.0": {}
+  "@openzeppelin/contracts@5.2.0": {}
 
   "@openzeppelin/contracts@5.4.0": {}
 
