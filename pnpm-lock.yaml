@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      "@openzeppelin/contracts-5.3.0":
+        specifier: npm:@openzeppelin/contracts@5.3.0
+        version: "@openzeppelin/contracts@5.3.0"
       ds-test:
         specifier: github:dapphub/ds-test
         version: https://codeload.github.com/dapphub/ds-test/tar.gz/e282159d5170298eb2455a6c05280ab5a73a4ef0
@@ -97,6 +100,10 @@ packages:
   "@jridgewell/trace-mapping@0.3.9":
     resolution:
       { integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ== }
+
+  "@openzeppelin/contracts@5.3.0":
+    resolution:
+      { integrity: sha512-zj/KGoW7zxWUE8qOI++rUM18v+VeLTTzKs/DJFkSzHpQFPD/jKKF0TrMxBfGLl3kpdELCNccvB3zmofSzm4nlA== }
 
   "@openzeppelin/contracts@5.4.0":
     resolution:
@@ -1186,6 +1193,8 @@ snapshots:
     dependencies:
       "@jridgewell/resolve-uri": 3.1.2
       "@jridgewell/sourcemap-codec": 1.5.4
+
+  "@openzeppelin/contracts@5.3.0": {}
 
   "@openzeppelin/contracts@5.4.0": {}
 
