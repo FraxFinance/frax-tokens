@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import { IFrxUSD } from "src/contracts/ethereum/interfaces/IFrxUSD.sol";
+import { IFrxUSD } from "src/contracts/ethereum/frxUSD/IFrxUSD.sol";
 
 /// @title FrxUSD2 interface
 interface IFrxUSD2 is IFrxUSD {
