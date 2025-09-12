@@ -1,6 +1,6 @@
 {
-  "name": "frax-template",
-  "version": "1.3.3",
+  "name": "frax-tokens",
+  "version": "1.0.0",
   "description": "",
   "directories": {
     "lib": "lib",
@@ -19,7 +19,6 @@
   "author": "Frax Finance",
   "license": "ISC",
   "devDependencies": {
-    "@openzeppelin/contracts": "^5.4.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.3.0",
     "prettier": "^3.6.2",
@@ -34,6 +33,8 @@
     "ds-test": "github:dapphub/ds-test",
     "forge-std": "github:foundry-rs/forge-std#60acb7aaadcce2d68e52986a0a66fe79f07d138f",
     "frax-standard-solidity": "github:FraxFinance/frax-standard-solidity",
-    "solidity-bytes-utils": "github:GNSPS/solidity-bytes-utils"
+    "solidity-bytes-utils": "github:GNSPS/solidity-bytes-utils",
+    "@openzeppelin/contracts-5.2.0": "npm:@openzeppelin/contracts@5.2.0",
+    "@openzeppelin/contracts-upgradeable-5.2.0": "npm:@openzeppelin/contracts-upgradeable@5.2.0"
   }
 }
