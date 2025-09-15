@@ -10,7 +10,7 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     env:
-      MAINNET_URL: ${{ secrets.MAINNET_RPC_URL }}s
+      MAINNET_URL: ${{ secrets.MAINNET_RPC_URL }}
       ARBITRUM_URL: ${{ secrets.ARBITRUM_MAINNET_URL }}
       FRAXTAL_MAINNET_URL: ${{ secrets.FRAXTAL_MAINNET_RPC_URL }}
     steps:
