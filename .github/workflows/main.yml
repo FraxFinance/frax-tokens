@@ -26,6 +26,7 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
+      - run: forge --version
       - run: pnpm i
       - run: pnpm lint:check
       - run: forge build
