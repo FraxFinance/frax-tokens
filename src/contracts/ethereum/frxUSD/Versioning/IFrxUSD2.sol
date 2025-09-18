@@ -1,9 +1,9 @@
 pragma solidity ^0.8.0;
 
-import { IFrxUSD } from "src/contracts/ethereum/frxUSD/IFrxUSD.sol";
+import { IFrxUSD1 } from "src/contracts/ethereum/frxUSD/versioning/IFrxUSD1.sol";
 
 /// @title FrxUSD2 interface
-interface IFrxUSD2 is IFrxUSD {
+interface IFrxUSD2 is IFrxUSD1 {
     function isFrozen(address account) external view returns (bool);
     function isPaused() external view returns (bool);
     function thawMany(address[] memory _owners) external;
