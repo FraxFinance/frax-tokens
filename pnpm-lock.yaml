@@ -8,17 +8,23 @@ importers:
   .:
     dependencies:
       "@fraxfinance/layerzero-v2-upgradeable":
-        specifier: github:fraxfinance/LayerZero-v2-upgradeable#deps/pin-oz
-        version: https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/0cc44426bfd8c202e8eedb0d234cc8a36805c41c
+        specifier: github:fraxfinance/LayerZero-v2-upgradeable#v1.0.2
+        version: https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/6729706fab0e033aef57a4dc42cfcb2c7f959748
       "@layerzerolabs/lz-evm-protocol-v2":
         specifier: ^3.0.107
-        version: 3.0.128(@openzeppelin/contracts-upgradeable@4.8.1)(@openzeppelin/contracts@5.4.0)(hardhat-deploy@0.12.4)(solidity-bytes-utils@https://codeload.github.com/GNSPS/solidity-bytes-utils/tar.gz/fc502455bb2a7e26a743378df042612dd50d1eb9)
+        version: 3.0.128(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.4.0))(@openzeppelin/contracts@5.4.0)(hardhat-deploy@0.12.4)(solidity-bytes-utils@https://codeload.github.com/GNSPS/solidity-bytes-utils/tar.gz/fc502455bb2a7e26a743378df042612dd50d1eb9)
       "@openzeppelin/contracts-4.8.1":
         specifier: npm:@openzeppelin/contracts@4.8.1
         version: "@openzeppelin/contracts@4.8.1"
+      "@openzeppelin/contracts-5.2.0":
+        specifier: npm:@openzeppelin/contracts@5.2.0
+        version: "@openzeppelin/contracts@5.2.0"
       "@openzeppelin/contracts-upgradeable-4.8.1":
         specifier: npm:@openzeppelin/contracts-upgradeable@4.8.1
         version: "@openzeppelin/contracts-upgradeable@4.8.1"
+      "@openzeppelin/contracts-upgradeable-5.2.0":
+        specifier: npm:@openzeppelin/contracts-upgradeable@5.2.0
+        version: "@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.4.0)"
       ds-test:
         specifier: github:dapphub/ds-test
         version: https://codeload.github.com/dapphub/ds-test/tar.gz/e282159d5170298eb2455a6c05280ab5a73a4ef0
@@ -32,9 +38,6 @@ importers:
         specifier: github:GNSPS/solidity-bytes-utils
         version: https://codeload.github.com/GNSPS/solidity-bytes-utils/tar.gz/fc502455bb2a7e26a743378df042612dd50d1eb9
     devDependencies:
-      "@openzeppelin/contracts":
-        specifier: ^5.4.0
-        version: 5.4.0
       husky:
         specifier: ^8.0.3
         version: 8.0.3
@@ -209,12 +212,12 @@ packages:
     resolution:
       { integrity: sha512-2df9bbXicZws2Sb5S6ET493uJ0Z84Fjr3pC4tu/qlnZERibZCeUVuqdtt+7Tv9xxhUxHoIekIA7avrKUWHrezg== }
 
-  "@fraxfinance/layerzero-v2-upgradeable@https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/0cc44426bfd8c202e8eedb0d234cc8a36805c41c":
+  "@fraxfinance/layerzero-v2-upgradeable@https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/6729706fab0e033aef57a4dc42cfcb2c7f959748":
     resolution:
       {
-        tarball: https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/0cc44426bfd8c202e8eedb0d234cc8a36805c41c,
+        tarball: https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/6729706fab0e033aef57a4dc42cfcb2c7f959748,
       }
-    version: 1.0.1
+    version: 1.0.2
     engines: { node: ">=18.12.0" }
 
   "@jridgewell/gen-mapping@0.3.12":
@@ -252,9 +255,19 @@ packages:
     resolution:
       { integrity: sha512-1wTv+20lNiC0R07jyIAbHU7TNHKRwGiTGRfiNnA8jOWjKT98g5OgLpYWOi40Vgpk8SPLA9EvfJAbAeIyVn+7Bw== }
 
+  "@openzeppelin/contracts-upgradeable@5.2.0":
+    resolution:
+      { integrity: sha512-mZIu9oa4tQTlGiOJHk6D3LdJlqFqF6oNOSn6S6UVJtzfs9UsY9/dhMEbAVTwElxUtJnjpf6yA062+oBp+eOyPg== }
+    peerDependencies:
+      "@openzeppelin/contracts": 5.2.0
+
   "@openzeppelin/contracts@4.8.1":
     resolution:
       { integrity: sha512-xQ6eUZl+RDyb/FiZe1h+U7qr/f4p/SrTSQcTPH2bjur3C5DbuW/zFgCU/b1P/xcIaEqJep+9ju4xDRi3rmChdQ== }
+
+  "@openzeppelin/contracts@5.2.0":
+    resolution:
+      { integrity: sha512-bxjNie5z89W1Ea0NZLZluFh8PrFNn9DH8DQlujEok2yjsOlraUPKID5p1Wk3qdNbf6XkQ1Os2RvfiHrrXLHWKA== }
 
   "@openzeppelin/contracts@5.4.0":
     resolution:
@@ -1881,7 +1894,7 @@ snapshots:
       "@ethersproject/properties": 5.8.0
       "@ethersproject/strings": 5.8.0
 
-  "@fraxfinance/layerzero-v2-upgradeable@https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/0cc44426bfd8c202e8eedb0d234cc8a36805c41c":
+  "@fraxfinance/layerzero-v2-upgradeable@https://codeload.github.com/fraxfinance/LayerZero-v2-upgradeable/tar.gz/6729706fab0e033aef57a4dc42cfcb2c7f959748":
     {}
 
   "@jridgewell/gen-mapping@0.3.12":
@@ -1903,16 +1916,22 @@ snapshots:
       "@jridgewell/resolve-uri": 3.1.2
       "@jridgewell/sourcemap-codec": 1.5.4
 
-  "@layerzerolabs/lz-evm-protocol-v2@3.0.128(@openzeppelin/contracts-upgradeable@4.8.1)(@openzeppelin/contracts@5.4.0)(hardhat-deploy@0.12.4)(solidity-bytes-utils@https://codeload.github.com/GNSPS/solidity-bytes-utils/tar.gz/fc502455bb2a7e26a743378df042612dd50d1eb9)":
+  "@layerzerolabs/lz-evm-protocol-v2@3.0.128(@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.4.0))(@openzeppelin/contracts@5.4.0)(hardhat-deploy@0.12.4)(solidity-bytes-utils@https://codeload.github.com/GNSPS/solidity-bytes-utils/tar.gz/fc502455bb2a7e26a743378df042612dd50d1eb9)":
     dependencies:
       "@openzeppelin/contracts": 5.4.0
-      "@openzeppelin/contracts-upgradeable": 4.8.1
+      "@openzeppelin/contracts-upgradeable": 5.2.0(@openzeppelin/contracts@5.4.0)
       hardhat-deploy: 0.12.4
       solidity-bytes-utils: https://codeload.github.com/GNSPS/solidity-bytes-utils/tar.gz/fc502455bb2a7e26a743378df042612dd50d1eb9
 
   "@openzeppelin/contracts-upgradeable@4.8.1": {}
 
+  "@openzeppelin/contracts-upgradeable@5.2.0(@openzeppelin/contracts@5.4.0)":
+    dependencies:
+      "@openzeppelin/contracts": 5.4.0
+
   "@openzeppelin/contracts@4.8.1": {}
+
+  "@openzeppelin/contracts@5.2.0": {}
 
   "@openzeppelin/contracts@5.4.0": {}
 
