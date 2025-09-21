@@ -10,7 +10,10 @@ const networkPrefixes = {
   Aurora: "AUR",
   Avalanche: "AVAX",
   BASE: "BASE",
+  BERA: "BERA",
+  BLAST: "BLAST",
   BSC: "BSC",
+  Ethereum: "ETH",
   Fantom: "FTM",
   FraxtalL1Devnet: "FXTL_L1_DN",
   FraxtalL2Devnet: "FXTL_L2_DN",
@@ -18,12 +21,22 @@ const networkPrefixes = {
   FraxtalTestnetL1: "FXTL_TN_L1",
   FraxtalTestnetL2: "FXTL_TN_L2",
   Holesky: "HOLESKY",
+  Hyperliquid: "HYPE",
+  Katana: "KTN",
   Mainnet: "ETH",
   Moonbeam: "MNBM",
   Moonriver: "MOVR",
   Optimism: "OPTI",
   Polygon: "POLY",
   PolygonzkEVM: "POLY_ZKEVM",
+  Scroll: "SCROLL",
+  Sei: "SEI",
+  Solana: "SOL",
+  Sonic: "SONIC",
+  Unichain: "UNI",
+  Worldchain: "WRLD",
+  Linea: "LINEA",
+  Zksync:"ZKSYNC"
 };
 
 const REMOVE_DUPLICATE_LABELS = false;
