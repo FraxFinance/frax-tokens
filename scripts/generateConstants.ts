@@ -4,8 +4,12 @@ import path from "path";
 import * as constants from "./constants";
 
 const networkPrefixes = {
+  Abstract: "ABS",
+  Aptos: "APT",
   Arbitrum: "ARBI",
+  Aurora: "AUR",
   Avalanche: "AVAX",
+  BASE: "BASE",
   BSC: "BSC",
   Fantom: "FTM",
   FraxtalL1Devnet: "FXTL_L1_DN",
