@@ -91,3 +91,4 @@ exclude_lints = [
     "mixed-case-function",
     "unaliased-plain-import"
 ]
+lint_on_build = false
