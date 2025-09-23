@@ -1066,6 +1066,14 @@ library Mainnet {
     address internal constant NON_FUNGIBLE_POSITION_MANAGER = 0xC36442b4a4522E871399CD717aBDD847Ab11FE88;
     address internal constant SWAPROUTER = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
     address internal constant UNISWAP_V3_FACTORY = 0x1F98431c8aD98523631AE4a59f267346ea31F984;
+    address internal constant FPIOFT = 0x9033BAD7aA130a2466060A2dA71fAe2219781B4b;
+    address internal constant FRXETHOFT = 0x1c1649A38f4A3c5A0c4a24070f688C525AB7D6E6;
+    address internal constant FRXUSDOFT = 0x566a6442A5A6e9895B9dCA97cC7879D632c6e4B0;
+    address internal constant SFRXETHOFT = 0xbBc424e58ED38dd911309611ae2d7A23014Bd960;
+    address internal constant SFRXUSDOFT = 0x7311CEA93ccf5f4F7b789eE31eBA5D9B9290E126;
+    address internal constant WFRAXOFT = 0x04ACaF8D2865c0714F79da09645C13FD2888977f;
+    address internal constant REMOTEHOP = 0x3ad4dC2319394bB4BE99A0e4aE2AbF7bCEbD648E;
+    address internal constant REMOTEMINTREDEEMHOP = 0x99B5587ab54A49e3F827D10175Caf69C0187bfA8;
 }
 
 abstract contract AddressHelperMainnet is TestBase {
@@ -2275,5 +2283,13 @@ abstract contract AddressHelperMainnet is TestBase {
         vm.label(0xC36442b4a4522E871399CD717aBDD847Ab11FE88, "Constants.ETH_NON_FUNGIBLE_POSITION_MANAGER");
         vm.label(0xE592427A0AEce92De3Edee1F18E0157C05861564, "Constants.ETH_SWAPROUTER");
         vm.label(0x1F98431c8aD98523631AE4a59f267346ea31F984, "Constants.ETH_UNISWAP_V3_FACTORY");
+        vm.label(0x9033BAD7aA130a2466060A2dA71fAe2219781B4b, "Constants.ETH_FPIOFT");
+        vm.label(0x1c1649A38f4A3c5A0c4a24070f688C525AB7D6E6, "Constants.ETH_FRXETHOFT");
+        vm.label(0x566a6442A5A6e9895B9dCA97cC7879D632c6e4B0, "Constants.ETH_FRXUSDOFT");
+        vm.label(0xbBc424e58ED38dd911309611ae2d7A23014Bd960, "Constants.ETH_SFRXETHOFT");
+        vm.label(0x7311CEA93ccf5f4F7b789eE31eBA5D9B9290E126, "Constants.ETH_SFRXUSDOFT");
+        vm.label(0x04ACaF8D2865c0714F79da09645C13FD2888977f, "Constants.ETH_WFRAXOFT");
+        vm.label(0x3ad4dC2319394bB4BE99A0e4aE2AbF7bCEbD648E, "Constants.ETH_REMOTEHOP");
+        vm.label(0x99B5587ab54A49e3F827D10175Caf69C0187bfA8, "Constants.ETH_REMOTEMINTREDEEMHOP");
     }
 }

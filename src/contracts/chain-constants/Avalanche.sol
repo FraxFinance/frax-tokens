@@ -58,6 +58,14 @@ library Avalanche {
     address internal constant PANGOLIN_CANFRAX_WAVAX = 0x0CE543c0f81ac9AAa665cCaAe5EeC70861a6b559;
     address internal constant PANGOLIN_CANFXS_USDC_E = 0x8614F7ca1f4b08Ef2C158a3027EA55fAA8384aC8;
     address internal constant TRADER_JOE_FRAX_WAVAX = 0x0d84595e8638dBc631076c51000B2d31120D8aa1;
+    address internal constant FPIOFT = 0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927;
+    address internal constant FRXETHOFT = 0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050;
+    address internal constant FRXUSDOFT = 0x80Eede496655FB9047dd39d9f418d5483ED600df;
+    address internal constant SFRXETHOFT = 0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45;
+    address internal constant SFRXUSDOFT = 0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0;
+    address internal constant WFRAXOFT = 0x64445f0aecC51E94aD52d8AC56b7190e764E561a;
+    address internal constant REMOTEHOP = 0x7a07D606c87b7251c2953A30Fa445d8c5F856C7A;
+    address internal constant REMOTEMINTREDEEMHOP = 0x452420df4AC1e3db5429b5FD629f3047482C543C;
 }
 
 abstract contract AddressHelperAvalanche is TestBase {
@@ -132,5 +140,13 @@ abstract contract AddressHelperAvalanche is TestBase {
         vm.label(0x0CE543c0f81ac9AAa665cCaAe5EeC70861a6b559, "Constants.AVAX_PANGOLIN_CANFRAX_WAVAX");
         vm.label(0x8614F7ca1f4b08Ef2C158a3027EA55fAA8384aC8, "Constants.AVAX_PANGOLIN_CANFXS_USDC_E");
         vm.label(0x0d84595e8638dBc631076c51000B2d31120D8aa1, "Constants.AVAX_TRADER_JOE_FRAX_WAVAX");
+        vm.label(0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927, "Constants.AVAX_FPIOFT");
+        vm.label(0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050, "Constants.AVAX_FRXETHOFT");
+        vm.label(0x80Eede496655FB9047dd39d9f418d5483ED600df, "Constants.AVAX_FRXUSDOFT");
+        vm.label(0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45, "Constants.AVAX_SFRXETHOFT");
+        vm.label(0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0, "Constants.AVAX_SFRXUSDOFT");
+        vm.label(0x64445f0aecC51E94aD52d8AC56b7190e764E561a, "Constants.AVAX_WFRAXOFT");
+        vm.label(0x7a07D606c87b7251c2953A30Fa445d8c5F856C7A, "Constants.AVAX_REMOTEHOP");
+        vm.label(0x452420df4AC1e3db5429b5FD629f3047482C543C, "Constants.AVAX_REMOTEMINTREDEEMHOP");
     }
 }

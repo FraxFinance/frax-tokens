@@ -50,6 +50,14 @@ library Optimism {
     address internal constant FPI_COMPTROLLER = 0x8Acc8819cBB632dE4a8E732f08b9E578D2A8F635;
     address internal constant CURVE_4POOL = 0x3da3153E26A230d918bb9F9428A8d60349B73379;
     address internal constant KYBERSWAP_ELASTIC_FRAX_USDC_OPTIMISM = 0x97cB76cbb84Aa35deaF1dAC3101a506588B6c197;
+    address internal constant FPIOFT = 0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927;
+    address internal constant FRXETHOFT = 0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050;
+    address internal constant FRXUSDOFT = 0x80Eede496655FB9047dd39d9f418d5483ED600df;
+    address internal constant SFRXETHOFT = 0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45;
+    address internal constant SFRXUSDOFT = 0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0;
+    address internal constant WFRAXOFT = 0x64445f0aecC51E94aD52d8AC56b7190e764E561a;
+    address internal constant REMOTEHOP = 0x31D982ebd82Ad900358984bd049207A4c2468640;
+    address internal constant REMOTEMINTREDEEMHOP = 0x7a07D606c87b7251c2953A30Fa445d8c5F856C7A;
 }
 
 abstract contract AddressHelperOptimism is TestBase {
@@ -116,5 +124,13 @@ abstract contract AddressHelperOptimism is TestBase {
         vm.label(0x8Acc8819cBB632dE4a8E732f08b9E578D2A8F635, "Constants.OPTI_FPI_COMPTROLLER");
         vm.label(0x3da3153E26A230d918bb9F9428A8d60349B73379, "Constants.OPTI_CURVE_4POOL");
         vm.label(0x97cB76cbb84Aa35deaF1dAC3101a506588B6c197, "Constants.OPTI_KYBERSWAP_ELASTIC_FRAX_USDC_OPTIMISM");
+        vm.label(0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927, "Constants.OPTI_FPIOFT");
+        vm.label(0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050, "Constants.OPTI_FRXETHOFT");
+        vm.label(0x80Eede496655FB9047dd39d9f418d5483ED600df, "Constants.OPTI_FRXUSDOFT");
+        vm.label(0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45, "Constants.OPTI_SFRXETHOFT");
+        vm.label(0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0, "Constants.OPTI_SFRXUSDOFT");
+        vm.label(0x64445f0aecC51E94aD52d8AC56b7190e764E561a, "Constants.OPTI_WFRAXOFT");
+        vm.label(0x31D982ebd82Ad900358984bd049207A4c2468640, "Constants.OPTI_REMOTEHOP");
+        vm.label(0x7a07D606c87b7251c2953A30Fa445d8c5F856C7A, "Constants.OPTI_REMOTEMINTREDEEMHOP");
     }
 }

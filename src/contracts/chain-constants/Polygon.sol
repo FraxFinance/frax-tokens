@@ -51,6 +51,14 @@ library Polygon {
     address internal constant DYSTOPIA_VOLATILEV1_AMM___FXS_FRAX = 0xfC2e89aabD257471a461dd506188609B2Bec53Fa;
     address internal constant FRAX3POOL = 0x5e5A23b52Cb48F5E70271Be83079cA5bC9c9e9ac;
     address internal constant HOP_LP_USDC = 0x9D373d22FD091d7f9A6649EB067557cc12Fb1A0A;
+    address internal constant FPIOFT = 0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927;
+    address internal constant FRXETHOFT = 0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050;
+    address internal constant FRXUSDOFT = 0x80Eede496655FB9047dd39d9f418d5483ED600df;
+    address internal constant SFRXETHOFT = 0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45;
+    address internal constant SFRXUSDOFT = 0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0;
+    address internal constant WFRAXOFT = 0x64445f0aecC51E94aD52d8AC56b7190e764E561a;
+    address internal constant REMOTEHOP = 0xf74D38A26948E9DDa53eD85cF03C6b1188FbB30C;
+    address internal constant REMOTEMINTREDEEMHOP = 0x5658e82E330e094627D9b362ed0E137eA06673C4;
 }
 
 abstract contract AddressHelperPolygon is TestBase {
@@ -112,5 +120,13 @@ abstract contract AddressHelperPolygon is TestBase {
         vm.label(0xfC2e89aabD257471a461dd506188609B2Bec53Fa, "Constants.POLY_DYSTOPIA_VOLATILEV1_AMM___FXS_FRAX");
         vm.label(0x5e5A23b52Cb48F5E70271Be83079cA5bC9c9e9ac, "Constants.POLY_FRAX3POOL");
         vm.label(0x9D373d22FD091d7f9A6649EB067557cc12Fb1A0A, "Constants.POLY_HOP_LP_USDC");
+        vm.label(0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927, "Constants.POLY_FPIOFT");
+        vm.label(0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050, "Constants.POLY_FRXETHOFT");
+        vm.label(0x80Eede496655FB9047dd39d9f418d5483ED600df, "Constants.POLY_FRXUSDOFT");
+        vm.label(0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45, "Constants.POLY_SFRXETHOFT");
+        vm.label(0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0, "Constants.POLY_SFRXUSDOFT");
+        vm.label(0x64445f0aecC51E94aD52d8AC56b7190e764E561a, "Constants.POLY_WFRAXOFT");
+        vm.label(0xf74D38A26948E9DDa53eD85cF03C6b1188FbB30C, "Constants.POLY_REMOTEHOP");
+        vm.label(0x5658e82E330e094627D9b362ed0E137eA06673C4, "Constants.POLY_REMOTEMINTREDEEMHOP");
     }
 }

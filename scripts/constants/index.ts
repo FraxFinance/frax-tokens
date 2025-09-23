@@ -7,7 +7,6 @@ export * as Base from "./base";
 export * as Bera from "./bera";
 export * as Blast from "./blast";
 export * as BSC from "./bsc";
-export * as Ethereum from "./ethereum";
 export * as Fantom from "./fantom";
 export * as FraxtalL1Devnet from "./fraxtal-devnet-l1";
 export * as FraxtalL2Devnet from "./fraxtal-devnet-l2";

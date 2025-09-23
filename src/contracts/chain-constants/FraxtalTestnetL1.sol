@@ -6,7 +6,7 @@ pragma solidity >=0.8.0;
 import { TestBase } from "forge-std/Test.sol";
 
 library FraxtalTestnetL1 {
-    uint256 internal constant CHAIN_ID = 17_000;
+    uint256 internal constant CHAIN_ID = 17000;
     address internal constant PROXY_ADMIN = 0xA0c6294D524f56fF9BdAeE94b69064c529cB9a1e;
     address internal constant COMPTROLLER = 0x88699c59E413e8A47117820D15d8D33b09B21edD;
     address internal constant ADDRESS_MANAGER = 0x6C52d1f7aAdD1F27aaa6A9e228CE0312E3CB09A6;
