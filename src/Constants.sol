@@ -46,27 +46,6 @@ library Aptos {
     bytes32 internal constant SFRXUSDOFT = 0xc9bdfdc965bb7fcdcfa6b45870eab33bfaf8f4e8e3f6b89d3e0203aba634a1c9;
     bytes32 internal constant WFRAXOFT = 0x267749b1a80d9d582019e6b0572c1dbc98648e24101b0861395cdbed095ceff2;
 }
-
-abstract contract AddressHelperAptos is TestBase {
-    constructor() {
-        labelConstants();
-    }
-
-    function labelConstants() public {
-        vm.label(0x15607151cc023512886f5af24d4f77e6e7a5d6fb8a482dfb56b9c4f5c1fca0b2, "Constants.APT_FPI");
-        vm.label(0x8645126a60d36e138d435a28875a2aeef253bf80aae22bebcd411ad4251f1585, "Constants.APT_FRXETH");
-        vm.label(0xe4354602aa4311f36240dd57f3f3435ffccdbd0cd2963f1a69da39a2dbcd59b5, "Constants.APT_FRXUSD");
-        vm.label(0x80d729c4632bcc6279b7bed2542e01e2cebd34ca9f3f15963c29d1621efc221a, "Constants.APT_SFRXETH");
-        vm.label(0xbf2efbffbbd7083aaf006379d96b866b73bb4eb9684a7504c62feafe670962c2, "Constants.APT_SFRXUSD");
-        vm.label(0x4e4cce8f877d7ad45c896c1823017fe07874f3d8db6e15960eda26e211151300, "Constants.APT_WFRAX");
-        vm.label(0xadf0ffffa5ee44a94f0c65be05e701951e65e276419f7460286a139d9403e864, "Constants.APT_FPIOFT");
-        vm.label(0xecb3a766f12981919158fc8ec3b98dd3f8b39a59280e62e80c600cea1b2c0f9c, "Constants.APT_FRXETHOFT");
-        vm.label(0xe067037681385b86d8344e6b7746023604c6ac90ddc997ba3c58396c258ad17b, "Constants.APT_FRXUSDOFT");
-        vm.label(0x28b7264258592031a024ed8e1632090648ec53797c269ac91aa0c9ed94268356, "Constants.APT_SFRXETHOFT");
-        vm.label(0xc9bdfdc965bb7fcdcfa6b45870eab33bfaf8f4e8e3f6b89d3e0203aba634a1c9, "Constants.APT_SFRXUSDOFT");
-        vm.label(0x267749b1a80d9d582019e6b0572c1dbc98648e24101b0861395cdbed095ceff2, "Constants.APT_WFRAXOFT");
-    }
-}
 library Arbitrum {
     address internal constant FRAX = 0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F;
     address internal constant FXS = 0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7;
@@ -3644,6 +3623,20 @@ abstract contract AddressHelperMoonriver is TestBase {
         vm.label(0xc0EAB66DaDC825c95cA1951A2B02BC56073Fc7B2, "Constants.MOVR_SUSHI_CANFXS_ANYUSDC");
     }
 }
+library Movement {
+    bytes32 internal constant FPI = 0x15607151cc023512886f5af24d4f77e6e7a5d6fb8a482dfb56b9c4f5c1fca0b2;
+    bytes32 internal constant FRXETH = 0x8645126a60d36e138d435a28875a2aeef253bf80aae22bebcd411ad4251f1585;
+    bytes32 internal constant FRXUSD = 0xe4354602aa4311f36240dd57f3f3435ffccdbd0cd2963f1a69da39a2dbcd59b5;
+    bytes32 internal constant SFRXETH = 0x80d729c4632bcc6279b7bed2542e01e2cebd34ca9f3f15963c29d1621efc221a;
+    bytes32 internal constant SFRXUSD = 0xbf2efbffbbd7083aaf006379d96b866b73bb4eb9684a7504c62feafe670962c2;
+    bytes32 internal constant WFRAX = 0x4e4cce8f877d7ad45c896c1823017fe07874f3d8db6e15960eda26e211151300;
+    bytes32 internal constant FPIOFT = 0xadf0ffffa5ee44a94f0c65be05e701951e65e276419f7460286a139d9403e864;
+    bytes32 internal constant FRXETHOFT = 0xecb3a766f12981919158fc8ec3b98dd3f8b39a59280e62e80c600cea1b2c0f9c;
+    bytes32 internal constant FRXUSDOFT = 0xe067037681385b86d8344e6b7746023604c6ac90ddc997ba3c58396c258ad17b;
+    bytes32 internal constant SFRXETHOFT = 0x28b7264258592031a024ed8e1632090648ec53797c269ac91aa0c9ed94268356;
+    bytes32 internal constant SFRXUSDOFT = 0xc9bdfdc965bb7fcdcfa6b45870eab33bfaf8f4e8e3f6b89d3e0203aba634a1c9;
+    bytes32 internal constant WFRAXOFT = 0x267749b1a80d9d582019e6b0572c1dbc98648e24101b0861395cdbed095ceff2;
+}
 library Optimism {
     address internal constant FRAX = 0x2E3D870790dC77A83DD1d18184Acc7439A53f475;
     address internal constant FXS = 0x67CCEA5bb16181E7b4109c9c2143c24a1c2205Be;
@@ -3986,27 +3979,6 @@ library Solana {
     bytes32 internal constant SFRXETHOFT_BYTES32 = 0xbf2f1fc27286a43f25b05bd843a74a5478c4246343fa90c1fcb641a1caf46c61;
     bytes32 internal constant SFRXUSDOFT_BYTES32 = 0x8602f005ca65b6da46a3c6ce66ecd1d15be911ca650d5f418d369df184b584cf;
     bytes32 internal constant WFRAXOFT_BYTES32 = 0x4939035f8dd13d15a9386e28b6705519aa6f488791323466a3c0116a201e51aa;
-}
-
-abstract contract AddressHelperSolana is TestBase {
-    constructor() {
-        labelConstants();
-    }
-
-    function labelConstants() public {
-        vm.label(8xKX8CRH9LxriRUNCPittu1jiovyQQr4EonWQjHZjWyH, "Constants.SOL_FPIOFT");
-        vm.label(5sDrwVNiHMM2jC78hRBH1CtysDQYiNKihubgW2zNu8tf, "Constants.SOL_FRXETHOFT");
-        vm.label(GzX1ireZDU865FiMaKrdVB1H6AE8LAqWYCg6chrMrfBw, "Constants.SOL_FRXUSDOFT");
-        vm.label(58zpC9acE6F4FBtd88L64NoWHJcmzLsQSy5bjz35Ydgv, "Constants.SOL_SFRXETHOFT");
-        vm.label(DUvWQMyASSkLNJFwsMDA4kwxEvmfaqpPGrvUVKtitX45, "Constants.SOL_SFRXUSDOFT");
-        vm.label(zZbQjiRg8uSxZaPu996XuviuZeSY6nsaMuutKZQBJga, "Constants.SOL_WFRAXOFT");
-        vm.label(0xd3cee058686107cc51844f331ee213a33142ab299b5ce473c1cf3a8ddaa721a0, "Constants.SOL_FPIOFT_BYTES32");
-        vm.label(0x38dd9e11bbf63835dc61d3cbf259f4221f5987ac92982c96609b99634662dfb3, "Constants.SOL_FRXETHOFT_BYTES32");
-        vm.label(0x5e208a73d5bb1c78e9dbf53badd7299afd6bee9acacdcd4fd668833e53c538ad, "Constants.SOL_FRXUSDOFT_BYTES32");
-        vm.label(0xbf2f1fc27286a43f25b05bd843a74a5478c4246343fa90c1fcb641a1caf46c61, "Constants.SOL_SFRXETHOFT_BYTES32");
-        vm.label(0x8602f005ca65b6da46a3c6ce66ecd1d15be911ca650d5f418d369df184b584cf, "Constants.SOL_SFRXUSDOFT_BYTES32");
-        vm.label(0x4939035f8dd13d15a9386e28b6705519aa6f488791323466a3c0116a201e51aa, "Constants.SOL_WFRAXOFT_BYTES32");
-    }
 }
 library Sonic {
     address internal constant FPIOFT = 0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927;

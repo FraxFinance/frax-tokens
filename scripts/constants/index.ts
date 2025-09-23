@@ -22,6 +22,7 @@ export * as Mainnet from "./mainnet";
 export * as Mode from "./mode";
 export * as Moonbeam from "./moonbeam";
 export * as Moonriver from "./moonriver";
+export * as Movement from "./movement";
 export * as Optimism from "./optimism";
 export * as Plumephoenix from "./plumephoenix";
 export * as Polygon from "./polygon";

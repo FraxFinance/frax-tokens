@@ -25,6 +25,7 @@ const networkPrefixes = {
   Ink: "INK",
   Katana: "KTN",
   Mainnet: "ETH",
+  Movement:"MOVE",
   Moonbeam: "MNBM",
   Moonriver: "MOVR",
   Optimism: "OPTI",
@@ -122,6 +123,11 @@ async function handleSingleNetwork(networkName, constants, seenValues) {
     }
   });
 
+  const contractString = `library ${networkName} {
+${constantString}
+}
+`;
+
   // Generate the labels for the entries
   const labelStrings = Object.entries(constantsToLabel)
     .map(([key, value]) => {
@@ -132,13 +138,11 @@ async function handleSingleNetwork(networkName, constants, seenValues) {
       return `        vm.label(${value}, "Constants.${networkPrefixes[networkName]}_${key}");`;
     })
     .join("\n");
-  const contractString = `library ${networkName} {
-${constantString}
-}
-`;
 
-  // if (networkName == "Mainnet") {
-  const constantsHelper = `
+  let constantsHelper = "";
+
+  if (networkName != "Aptos" && networkName != "Movement" && networkName != "Solana") {
+    constantsHelper = constantsHelper + `
 abstract contract AddressHelper${networkName} is TestBase {
     constructor() {
         labelConstants();
@@ -149,6 +153,7 @@ ${labelStrings}
     }
 }
 `;
+  }
   return contractString + constantsHelper;
   // }
   // return contractString;

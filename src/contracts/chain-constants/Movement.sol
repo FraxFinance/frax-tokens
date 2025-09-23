@@ -5,7 +5,7 @@ pragma solidity >=0.8.0;
 
 import { TestBase } from "forge-std/Test.sol";
 
-library Aptos {
+library Movement {
     bytes32 internal constant FPI = 0x15607151cc023512886f5af24d4f77e6e7a5d6fb8a482dfb56b9c4f5c1fca0b2;
     bytes32 internal constant FRXETH = 0x8645126a60d36e138d435a28875a2aeef253bf80aae22bebcd411ad4251f1585;
     bytes32 internal constant FRXUSD = 0xe4354602aa4311f36240dd57f3f3435ffccdbd0cd2963f1a69da39a2dbcd59b5;
