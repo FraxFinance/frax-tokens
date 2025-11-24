@@ -24,9 +24,9 @@ contract ERC20PermitPermissionedOptiMintable is
     ILegacyMintableERC20,
     ISemver
 {
-    /// @custom:semver 1.0.1
+    /// @custom:semver 1.0.0
     function version() public pure virtual returns (string memory) {
-        return "1.0.1";
+        return "1.0.0";
     }
 
     /// @notice The timelock address
@@ -47,19 +47,24 @@ contract ERC20PermitPermissionedOptiMintable is
 
     /* ========== CONSTRUCTOR ========== */
 
-    /// @custom:semver 1.0.1
+    /// @custom:semver 1.0.0
+    /// @param _creator_address The contract creator
+    /// @param _timelock_address The timelock
     /// @param _bridge Address of the L2 standard bridge
     /// @param _remoteToken Address of the corresponding L1 token
     /// @param _name ERC20 name
     /// @param _symbol ERC20 symbol
     constructor(
+        address _creator_address,
+        address _timelock_address,
         address _bridge,
         address _remoteToken,
         string memory _name,
         string memory _symbol
-    ) ERC20(_name, _symbol) ERC20Permit(_name) OwnedV2(address(1)) {
+    ) ERC20(_name, _symbol) ERC20Permit(_name) OwnedV2(_creator_address) {
         REMOTE_TOKEN = _remoteToken;
         BRIDGE = _bridge;
+        timelock_address = _timelock_address;
     }
 
     /* ========== MODIFIERS ========== */
