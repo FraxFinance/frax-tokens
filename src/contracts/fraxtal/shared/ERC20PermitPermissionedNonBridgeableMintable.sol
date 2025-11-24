@@ -14,7 +14,7 @@ contract ERC20PermitPermissionedNonBridgeableMintable is ERC20PermitPermissioned
     constructor(
         string memory _name,
         string memory _symbol
-    ) ERC20PermitPermissionedOptiMintable(address(0), address(0), _name, _symbol) {}
+    ) ERC20PermitPermissionedOptiMintable(address(0), address(0), address(0), address(0), _name, _symbol) {}
 
     function mint(address, uint256) external pure override {
         revert Deprecated();
