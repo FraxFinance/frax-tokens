@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
 import { ERC20PermitPermissionedOptiMintable } from "src/contracts/fraxtal/shared/ERC20PermitPermissionedOptiMintable.sol";
-import { SignatureChecker } from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
+import { SignatureChecker } from "@openzeppelin/contracts-5.2.0/utils/cryptography/SignatureChecker.sol";
 
 contract FrxUSD is ERC20PermitPermissionedOptiMintable {
     /// @dev keccak256("TransferWithAuthorization(address from,address to,uint256 value,uint256 validAfter,uint256 validBefore,bytes32 nonce)")
@@ -34,7 +34,7 @@ contract FrxUSD is ERC20PermitPermissionedOptiMintable {
     /// @notice Upgrade version of the contract
     /// @dev Does not impact EIP712 version, which is automatically set to "1" in constructor
     function version() public pure override returns (string memory) {
-        return "2.0.0";
+        return "3.0.0";
     }
 
     /// @param _creator_address The contract creator
