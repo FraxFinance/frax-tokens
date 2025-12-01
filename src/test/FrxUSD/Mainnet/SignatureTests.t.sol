@@ -40,6 +40,8 @@ contract TestFrxUSDSignatures is FraxTest {
 
         deal(address(frxUsd), al, 100e18);
         deal(address(frxUsd), bob, 100e18);
+
+        vm.etch(al, hex"");
     }
 
     function test_Deploy_StorageMatches() public {

@@ -38,6 +38,8 @@ contract TestSfrxUSDSignatures is FraxTest {
 
         deal(address(sfrxUsd), al, 100e18);
         deal(address(sfrxUsd), bob, 100e18);
+
+        vm.etch(al, hex"");
     }
 
     function test_DOMAIN_SEPARATOR_isCorrect() external {
