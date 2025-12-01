@@ -546,7 +546,7 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         frxusd.thaw(al);
     }
 
-    function test_only_owner_can_freezeMany() public {
+    function test_only_freezer_can_freezeMany() public {
         _upgradeFrxUSD();
 
         targets.push(bob);
