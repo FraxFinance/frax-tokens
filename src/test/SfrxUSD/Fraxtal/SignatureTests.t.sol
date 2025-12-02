@@ -4,6 +4,8 @@ import "frax-std/FraxTest.sol";
 import "src/script/fraxtal/sfrxUSD/DeploySfrxUSD.s.sol";
 
 import { SigUtils } from "src/test/utils/SigUtils.sol";
+import { EIP3009Module } from "src/contracts/shared/core/modules/EIP3009Module.sol";
+import { SignatureModule } from "src/contracts/shared/core/modules/SignatureModule.sol";
 
 contract TestSfrxUSDSignatures is FraxTest {
     SfrxUSD public sfrxUsd;
@@ -188,7 +190,7 @@ contract TestSfrxUSDSignatures is FraxTest {
         (v, r, s) = vm.sign(alPrivateKey, sigUtils.getTransferWithAuthorizationTypedDataHash(authorization));
 
         // try to transfer with authorization should fail
-        vm.expectRevert(SfrxUSD.UsedOrCanceledAuthorization.selector);
+        vm.expectRevert(EIP3009Module.UsedOrCanceledAuthorization.selector);
         vm.prank(bob);
         sfrxUsd.transferWithAuthorization({
             from: al,
@@ -218,7 +220,7 @@ contract TestSfrxUSDSignatures is FraxTest {
 
         // al cancels the authorization
         vm.prank(al);
-        vm.expectRevert(SfrxUSD.UsedOrCanceledAuthorization.selector);
+        vm.expectRevert(EIP3009Module.UsedOrCanceledAuthorization.selector);
         sfrxUsd.cancelAuthorization({ authorizer: al, nonce: nonce, v: v, r: r, s: s });
     }
 
@@ -240,7 +242,7 @@ contract TestSfrxUSDSignatures is FraxTest {
         );
 
         // Try to transfer with authorization should fail
-        vm.expectRevert(SfrxUSD.UsedOrCanceledAuthorization.selector);
+        vm.expectRevert(EIP3009Module.UsedOrCanceledAuthorization.selector);
         vm.prank(bob);
         sfrxUsd.transferWithAuthorization({
             from: al,
@@ -273,7 +275,7 @@ contract TestSfrxUSDSignatures is FraxTest {
         );
 
         // Try to receive with authorization should fail
-        vm.expectRevert(SfrxUSD.UsedOrCanceledAuthorization.selector);
+        vm.expectRevert(EIP3009Module.UsedOrCanceledAuthorization.selector);
         vm.prank(bob);
         sfrxUsd.receiveWithAuthorization({
             from: al,
@@ -290,7 +292,7 @@ contract TestSfrxUSDSignatures is FraxTest {
 
     function test_TransferWithAuthorization_InvalidAuthorization_reverts() external {
         // Try to transfer with authorization should fail
-        vm.expectRevert(SfrxUSD.InvalidAuthorization.selector);
+        vm.expectRevert(EIP3009Module.InvalidAuthorization.selector);
         vm.prank(bob);
         sfrxUsd.transferWithAuthorization({
             from: al,
@@ -307,7 +309,7 @@ contract TestSfrxUSDSignatures is FraxTest {
 
     function test_ReceiveWithAuthorization_InvalidAuthorization_reverts() external {
         // Try to transfer with authorization should fail
-        vm.expectRevert(SfrxUSD.InvalidAuthorization.selector);
+        vm.expectRevert(EIP3009Module.InvalidAuthorization.selector);
         vm.prank(bob);
         sfrxUsd.receiveWithAuthorization({
             from: al,
@@ -324,7 +326,7 @@ contract TestSfrxUSDSignatures is FraxTest {
 
     function test_TransferWithAuthorization_ExpiredAuthorization_reverts() external {
         // Try to transfer with authorization should fail
-        vm.expectRevert(SfrxUSD.ExpiredAuthorization.selector);
+        vm.expectRevert(EIP3009Module.ExpiredAuthorization.selector);
         vm.prank(bob);
         sfrxUsd.transferWithAuthorization({
             from: al,
@@ -341,7 +343,7 @@ contract TestSfrxUSDSignatures is FraxTest {
 
     function test_ReceiveWithAuthorization_ExpiredAuthorization_reverts() external {
         // Try to transfer with authorization should fail
-        vm.expectRevert(SfrxUSD.ExpiredAuthorization.selector);
+        vm.expectRevert(EIP3009Module.ExpiredAuthorization.selector);
         vm.prank(bob);
         sfrxUsd.receiveWithAuthorization({
             from: al,
@@ -357,7 +359,7 @@ contract TestSfrxUSDSignatures is FraxTest {
     }
 
     function test_ReceiveWithAuthorization_InvalidPayee_reverts() external {
-        vm.expectRevert(abi.encodeWithSelector(SfrxUSD.InvalidPayee.selector, bob, owner));
+        vm.expectRevert(abi.encodeWithSelector(EIP3009Module.InvalidPayee.selector, bob, owner));
         vm.prank(bob);
         sfrxUsd.receiveWithAuthorization({
             from: al,
@@ -389,7 +391,7 @@ contract TestSfrxUSDSignatures is FraxTest {
 
         // bob tries to transfer from al to owner, which is not conformed to the signature
         vm.prank(bob);
-        vm.expectRevert(SfrxUSD.InvalidSignature.selector);
+        vm.expectRevert(SignatureModule.InvalidSignature.selector);
         sfrxUsd.transferWithAuthorization({
             from: al,
             to: owner, // note: this is causing the revert
@@ -420,7 +422,7 @@ contract TestSfrxUSDSignatures is FraxTest {
 
         // bob tries to receive the tokens, which is not conformed to the signature
         vm.prank(bob);
-        vm.expectRevert(SfrxUSD.InvalidSignature.selector);
+        vm.expectRevert(SignatureModule.InvalidSignature.selector);
         sfrxUsd.receiveWithAuthorization({
             from: al,
             to: bob, // note: this is causing the revert

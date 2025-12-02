@@ -15,8 +15,8 @@ import { IERC20 } from "@openzeppelin/contracts-5.3.0/token/ERC20/IERC20.sol";
 import { ERC20 } from "solmate/tokens/ERC20.sol";
 
 import { SfrxUSD2 } from "src/contracts/ethereum/sfrxUSD/versioning/SfrxUSD2.sol";
-import { EIP3009Module, SignatureModule } from "src/contracts/ethereum/shared/modules/EIP3009Module.sol";
-import { PermitModule } from "src/contracts/ethereum/shared/modules/PermitModule.sol";
+import { EIP3009Module, SignatureModule } from "src/contracts/shared/core/modules/EIP3009Module.sol";
+import { PermitModule } from "src/contracts/shared/core/modules/PermitModule.sol";
 
 /**
  * @title StakedFrxUSD3

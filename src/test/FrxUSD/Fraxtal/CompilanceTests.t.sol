@@ -30,8 +30,6 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         // implV2 = FrxUSD(deployFrxUsdImplementationFraxtal());
         // implV2 = FrxUSD(0x00000000cd6f03dd0A6389C40c263838636c2C01);
         implV2 = new FrxUSD(
-            address(1),
-            address(1),
             address(0x4200000000000000000000000000000000000010),
             address(0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29)
         );

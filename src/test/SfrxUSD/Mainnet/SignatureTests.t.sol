@@ -5,8 +5,8 @@ import "src/script/ethereum/sfrxUSD/DeploySfrxUSD.s.sol";
 import { console } from "forge-std/console.sol";
 import { SigUtils } from "src/test/utils/SigUtils.sol";
 
-import { EIP3009Module } from "src/contracts/ethereum/shared/modules/EIP3009Module.sol";
-import { SignatureModule } from "src/contracts/ethereum/shared/modules/SignatureModule.sol";
+import { EIP3009Module } from "src/contracts/shared/core/modules/EIP3009Module.sol";
+import { SignatureModule } from "src/contracts/shared/core/modules/SignatureModule.sol";
 
 contract TestSfrxUSDSignatures is FraxTest {
     SfrxUSD public sfrxUsd;

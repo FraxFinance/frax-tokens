@@ -17,7 +17,7 @@ abstract contract SignatureModule {
                 signer: signer,
                 hash: __hashTypedDataV4({ structHash: structHash }),
                 signature: signature
-            }) || signer == address(0)
+            })
         ) revert InvalidSignature();
     }
 

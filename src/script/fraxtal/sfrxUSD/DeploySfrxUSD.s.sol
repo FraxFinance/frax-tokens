@@ -42,8 +42,6 @@ contract DeploySfrxUSD is BaseScript {
     function deployFrxUsd() public broadcaster {
         implementation = address(
             new SfrxUSD(
-                address(1),
-                address(1),
                 address(0x4200000000000000000000000000000000000010),
                 address(0xcf62F905562626CfcDD2261162a51fd02Fc9c5b6)
             )

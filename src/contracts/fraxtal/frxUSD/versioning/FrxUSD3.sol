@@ -1,7 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { FrxUSD2, ERC20, EIP712, Nonces, ERC20Permit } from "src/contracts/ethereum/frxUSD/versioning/FrxUSD2.sol";
+import { ERC20Permit, ERC20, EIP712, Nonces } from "@openzeppelin/contracts-5.2.0/token/ERC20/extensions/ERC20Permit.sol";
+import { FrxUSD2 } from "src/contracts/fraxtal/frxUSD/versioning/FrxUSD2.sol";
 import { PermitModule } from "src/contracts/shared/core/modules/PermitModule.sol";
 import { EIP3009Module, SignatureModule } from "src/contracts/shared/core/modules/EIP3009Module.sol";
 
@@ -9,7 +10,11 @@ import { EIP3009Module, SignatureModule } from "src/contracts/shared/core/module
 /// @notice Frax USD Stablecoin by Frax Finance
 /// @dev v3.0.0 adds ERC-1271 and EIP-3009 support
 contract FrxUSD3 is FrxUSD2, EIP3009Module, PermitModule {
-    constructor() FrxUSD2(address(1), "Frax USD", "frxUSD") {}
+    function version() public pure override returns (string memory) {
+        return "3.0.0";
+    }
+
+    constructor(address _bridge, address _remoteToken) FrxUSD2(address(1), address(1), _bridge, _remoteToken) {}
 
     /*//////////////////////////////////////////////////////////////
                         Module Overrides
