@@ -23,7 +23,7 @@ address constant FRXETH_PROXY = 0xFC00000000000000000000000000000000000006;
 address constant SFRXETH_PROXY = 0xFC00000000000000000000000000000000000005;
 
 // forge script src/script/fraxtal/2025-12-02-deprecate-nativing-bridging/DeprecateNativeBridging.s.sol --rpc-url https://rpc.frax.com TODO: verify
-contract DeployFrxUSD is BaseScript {
+contract DeprecateNativeBridging is BaseScript {
     address public proxyAdmin;
     address public owner;
     address public implementation;
