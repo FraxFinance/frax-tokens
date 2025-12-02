@@ -182,13 +182,13 @@ contract ERC20ExWrappedPPOM is
 
     /// @notice Allows the StandardBridge on this network to mint tokens.
     /// @dev Deprecated in v1.1.0
-    function mint(address, uint256) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) onlyBridge {
+    function mint(address, uint256) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) {
         revert Deprecated();
     }
 
     /// @notice Allows the StandardBridge on this network to burn tokens. No approval needed
     /// @dev Deprecated in v1.1.0
-    function burn(address, uint256) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) onlyBridge {
+    function burn(address, uint256) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) {
         revert Deprecated();
     }
 
