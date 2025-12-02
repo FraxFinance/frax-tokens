@@ -50,7 +50,7 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         }
         _upgradeFrxUSD();
 
-        // check that all slots less slot #12 match
+        // check that all slots match
         for (uint256 i; i < 20; i++) {
             bytes32 slotVal = vm.load(address(frxusd), bytes32(uint256(i)));
             assertEq({ left: frxusdStorageLayoutInitial[i], right: slotVal, err: "// THEN: slot value not expected" });
@@ -156,6 +156,36 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
 
     function test_upgrade_and_freeze_successful() public {
         _upgradeAndFreeze(al);
+    }
+
+    function test_upgrade_and_addFreezer_successful() public {
+        _upgradeFrxUSD();
+
+        assertEq({ left: frxusd.isFreezer(al), right: false, err: "// THEN: al is already a freezer" });
+        vm.prank(frxusd.owner());
+        frxusd.addFreezer(al);
+        assertEq({ left: frxusd.isFreezer(al), right: true, err: "// THEN: al is not a freezer" });
+    }
+
+    function test_upgrade_and_removeFreezer_successful() public {
+        _upgradeFrxUSD();
+        vm.prank(frxusd.owner());
+        frxusd.addFreezer(al);
+        assertEq({ left: frxusd.isFreezer(al), right: true, err: "// THEN: al is not a freezer" });
+
+        vm.prank(frxusd.owner());
+        frxusd.removeFreezer(al);
+        assertEq({ left: frxusd.isFreezer(al), right: false, err: "// THEN: al is still a freezer" });
+    }
+
+    function test_upgrade_and_freezer_freezes() public {
+        _upgradeFrxUSD();
+        vm.prank(frxusd.owner());
+        frxusd.addFreezer(al);
+
+        vm.prank(al);
+        frxusd.freeze(bob);
+        assertEq({ left: frxusd.isFrozen(bob), right: true, err: "// THEN: bob was not frozen" });
     }
 
     function test_upgrade_and_freeze_transfer_Reverts() public {
@@ -495,11 +525,11 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         frxusd.unpause();
     }
 
-    function test_only_owner_can_freeze() public {
+    function test_only_freezer_can_freeze() public {
         _upgradeFrxUSD();
 
         vm.prank(badActor);
-        vm.expectRevert(bytes4(keccak256("OnlyOwner()")));
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
         frxusd.freeze(bob);
     }
 
@@ -511,14 +541,14 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         frxusd.thaw(al);
     }
 
-    function test_only_owner_can_freezeMany() public {
+    function test_only_freezer_can_freezeMany() public {
         _upgradeFrxUSD();
 
         targets.push(bob);
         targets.push(carl);
 
         vm.prank(badActor);
-        vm.expectRevert(bytes4(keccak256("OnlyOwner()")));
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
         frxusd.freezeMany(targets);
     }
 

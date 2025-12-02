@@ -1,7 +1,21 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import { ERC20PermitPermissionedNonBridgeableMintable } from "src/contracts/fraxtal/shared/ERC20PermitPermissionedNonBridgeableMintable.sol";
+// ====================================================================
+// |     ______                   _______                             |
+// |    / _____________ __  __   / ____(_____  ____ _____  ________   |
+// |   / /_  / ___/ __ `| |/_/  / /_  / / __ \/ __ `/ __ \/ ___/ _ \  |
+// |  / __/ / /  / /_/ _>  <   / __/ / / / / / /_/ / / / / /__/  __/  |
+// | /_/   /_/   \__,_/_/|_|  /_/   /_/_/ /_/\__,_/_/ /_/\___/\___/   |
+// |                                                                  |
+// ====================================================================
+// ============================= FrxUSD ===============================
+// ====================================================================
+// Frax Finance: https://github.com/FraxFinance
+// Tested for 18-decimal underlying assets only
 
-contract SfrxUSD is ERC20PermitPermissionedNonBridgeableMintable {
-    constructor() ERC20PermitPermissionedNonBridgeableMintable("Staked Frax USD", "sfrxUSD") {}
+import { SfrxUSD2 } from "src/contracts/fraxtal/sfrxUSD/versioning/SfrxUSD2.sol";
+
+contract SfrxUSD is SfrxUSD2 {
+    constructor() SfrxUSD2() {}
 }

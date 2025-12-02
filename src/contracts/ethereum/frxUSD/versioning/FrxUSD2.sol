@@ -27,6 +27,10 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     /// @notice Whether or not the contract is paused
     bool public isPaused;
 
+    mapping(address => bool) public isFreezer;
+
+    uint256[45] private __gap;
+
     /* ========== CONSTRUCTOR ========== */
     /// @param _ownerAddress The initial owner
     /// @param _name ERC20 name
@@ -36,16 +40,6 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
         string memory _name,
         string memory _symbol
     ) ERC20(_name, _symbol) ERC20Permit(_name) Ownable(_ownerAddress) {}
-
-    /* ========== INITIALIZER ========== */
-    /// @dev Used to initialize the contract when it is behind a proxy
-    function initialize(address _owner, string memory _name, string memory _symbol) public {
-        require(owner() == address(0), "Already initialized");
-        if (_owner == address(0)) revert OwnerCannotInitToZeroAddress();
-        _transferOwnership(_owner);
-        StorageSlot.getBytesSlot(bytes32(uint256(3))).value = bytes(_name);
-        StorageSlot.getBytesSlot(bytes32(uint256(4))).value = bytes(_symbol);
-    }
 
     /* ========== MODIFIERS ========== */
 
@@ -106,6 +100,18 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
         emit MinterRemoved(minter_address);
     }
 
+    function addFreezer(address _freezer) external onlyOwner {
+        if (isFreezer[_freezer]) revert AlreadyFreezer();
+        isFreezer[_freezer] = true;
+        emit AddFreezer(_freezer);
+    }
+
+    function removeFreezer(address _freezer) external onlyOwner {
+        if (!isFreezer[_freezer]) revert NotFreezer();
+        isFreezer[_freezer] = false;
+        emit RemoveFreezer(_freezer);
+    }
+
     /// @notice External admin gated function to unfreeze a set of accounts
     /// @param _owners Array of accounts to be unfrozen
     function thawMany(address[] memory _owners) external onlyOwner {
@@ -123,7 +129,8 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
 
     /// @notice External admin gated function to batch freeze a set of accounts
     /// @param _owners Array of accounts to be frozen
-    function freezeMany(address[] memory _owners) external onlyOwner {
+    function freezeMany(address[] memory _owners) external {
+        if (!isFreezer[msg.sender] && msg.sender != owner()) revert NotFreezer();
         uint256 len = _owners.length;
         for (uint256 i; i < len; ++i) {
             _freeze(_owners[i]);
@@ -132,7 +139,8 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
 
     /// @notice External admin gated function to freeze a given account
     /// @param _owner The account to be
-    function freeze(address _owner) external onlyOwner {
+    function freeze(address _owner) external {
+        if (!isFreezer[msg.sender] && msg.sender != owner()) revert NotFreezer();
         _freeze(_owner);
     }
 
@@ -204,6 +212,14 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
 
     /* ========== EVENTS ========== */
 
+    /// @notice Emitted when a freezer is added
+    /// @param freezer The address that was added as a freezer
+    event AddFreezer(address indexed freezer);
+
+    /// @notice Emitted when a freezer is removed
+    /// @param freezer The address that was removed as a freezer
+    event RemoveFreezer(address indexed freezer);
+
     /// @notice Emitted whenever the bridge burns tokens from an account
     /// @param account Address of the account tokens are being burned from
     /// @param amount  Amount of tokens burned
@@ -253,4 +269,6 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     error IsPaused();
     error IsFrozen();
     error OwnerCannotInitToZeroAddress();
+    error NotFreezer();
+    error AlreadyFreezer();
 }

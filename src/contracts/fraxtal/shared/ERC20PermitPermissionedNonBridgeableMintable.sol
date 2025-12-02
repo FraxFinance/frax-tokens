@@ -7,7 +7,7 @@ import { ERC20PermitPermissionedOptiMintable } from "src/contracts/fraxtal/share
 /// @notice A native ERC20 token that cannot be bridged via the native bridge
 contract ERC20PermitPermissionedNonBridgeableMintable is ERC20PermitPermissionedOptiMintable {
     /// @custom:semver 1.0.0
-    function version() public pure override returns (string memory) {
+    function version() public pure virtual override returns (string memory) {
         return "1.0.0";
     }
 
