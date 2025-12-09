@@ -9,7 +9,7 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
     /// @notice Whether or not the contract is paused
     bool public isPaused;
 
-    /// @notice Mapping indiciating which addresses can freeze accounts
+    /// @notice Mapping indicating which addresses can freeze accounts
     mapping(address => bool) public isFreezer;
 
     uint256[47] private __gap;
