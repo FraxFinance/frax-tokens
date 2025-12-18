@@ -27,6 +27,10 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     /// @notice Whether or not the contract is paused
     bool public isPaused;
 
+    mapping(address => bool) public isFreezer;
+
+    uint256[45] private __gap;
+
     /* ========== CONSTRUCTOR ========== */
     /// @param _ownerAddress The initial owner
     /// @param _name ERC20 name
