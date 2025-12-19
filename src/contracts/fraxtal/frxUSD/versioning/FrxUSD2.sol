@@ -121,7 +121,7 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
     /* ========== Internals For Admin Gated ========== */
 
     /// @notice Internal helper function to freeze an account
-    /// @param _owner The account to 'frozen'
+    /// @param _owner The account to freeze
     function _freeze(address _owner) internal {
         isFrozen[_owner] = true;
         emit AccountFrozen(_owner);
