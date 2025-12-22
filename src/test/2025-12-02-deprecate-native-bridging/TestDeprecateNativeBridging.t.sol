@@ -1,6 +1,6 @@
 pragma solidity ^0.8.0;
 
-import "src/script/fraxtal/2025-12-02-deprecate-nativing-bridging/DeprecateNativeBridging.s.sol";
+import "src/script/fraxtal/2025-12-02-deprecate-native-bridging/DeprecateNativeBridging.s.sol";
 import "frax-std/FraxTest.sol";
 import { ERC20PermitPermissionedNonBridgeableMintable } from "src/contracts/fraxtal/shared/ERC20PermitPermissionedNonBridgeableMintable.sol";
 
