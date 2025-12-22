@@ -134,7 +134,7 @@ contract DeprecateNativeBridging is BaseScript {
         string memory root = vm.projectRoot();
         string memory filename = string.concat(
             root,
-            "/src/script/fraxtal/2025-12-02-deprecate-nativing-bridging/DeprecateNativeBridging.json"
+            "/src/script/fraxtal/2025-12-02-deprecate-native-bridging/DeprecateNativeBridging.json"
         );
         txHelper.writeTxs(txs, filename);
 
