@@ -41,16 +41,16 @@ contract SfrxUSD3 is SfrxUSD2, EIP3009Module, PermitModule {
         emit Approval(owner, spender, amount);
     }
 
-    function __transfer(address owner, address spender, uint256 amount) internal override returns (bool) {
-        balanceOf[owner] -= amount;
+    function __transfer(address from, address to, uint256 amount) internal override returns (bool) {
+        balanceOf[from] -= amount;
 
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.
         unchecked {
-            balanceOf[spender] += amount;
+            balanceOf[to] += amount;
         }
 
-        emit Transfer(owner, spender, amount);
+        emit Transfer(from, to, amount);
         return true;
     }
 
