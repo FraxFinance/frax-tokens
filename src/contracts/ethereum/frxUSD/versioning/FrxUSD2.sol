@@ -268,7 +268,7 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     error ArrayMisMatch();
     error IsPaused();
     error IsFrozen();
-    error OwnerCannotInitToZeroAddress();
     error NotFreezer();
     error AlreadyFreezer();
+    error OwnerCannotInitToZeroAddress();
 }
