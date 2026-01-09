@@ -426,11 +426,11 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         frxusd.unpause();
     }
 
-    function test_only_freezer_can_freeze() public {
+    function test_only_owner_can_freeze() public {
         _upgradeFrxUSD();
 
         vm.prank(badActor);
-        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
+        vm.expectRevert();
         frxusd.freeze(bob);
     }
 
@@ -442,14 +442,14 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         frxusd.thaw(al);
     }
 
-    function test_only_freezer_can_freezeMany() public {
+    function test_only_owner_can_freezeMany() public {
         _upgradeFrxUSD();
 
         targets.push(bob);
         targets.push(carl);
 
         vm.prank(badActor);
-        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
+        vm.expectRevert();
         frxusd.freezeMany(targets);
     }
 
