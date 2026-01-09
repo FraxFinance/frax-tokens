@@ -1,11 +1,9 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { ERC20Permit, ERC20, EIP712, Nonces } from "@openzeppelin/contracts-5.3.0/token/ERC20/extensions/ERC20Permit.sol";
+import { ERC20Permit, ERC20 } from "@openzeppelin/contracts-5.3.0/token/ERC20/extensions/ERC20Permit.sol";
 import { ERC20Burnable } from "@openzeppelin/contracts-5.3.0/token/ERC20/extensions/ERC20Burnable.sol";
-import { Ownable2Step } from "@openzeppelin/contracts-5.3.0/access/Ownable2Step.sol";
-import { Ownable } from "@openzeppelin/contracts-5.3.0/access/Ownable.sol";
-import { StorageSlot } from "@openzeppelin/contracts-5.3.0/utils/StorageSlot.sol";
+import { Ownable2Step, Ownable } from "@openzeppelin/contracts-5.3.0/access/Ownable2Step.sol";
 
 /// @title FrxUSD2
 /**

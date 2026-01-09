@@ -1,7 +1,8 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { FrxUSD2, ERC20, EIP712, Nonces, ERC20Permit } from "src/contracts/ethereum/frxUSD/versioning/FrxUSD2.sol";
+import { FrxUSD2, ERC20, ERC20Permit } from "src/contracts/ethereum/frxUSD/versioning/FrxUSD2.sol";
+import { EIP712, Nonces } from "@openzeppelin/contracts-5.3.0/token/ERC20/extensions/ERC20Permit.sol";
 import { PermitModule } from "src/contracts/shared/core/modules/PermitModule.sol";
 import { EIP3009Module, SignatureModule } from "src/contracts/shared/core/modules/EIP3009Module.sol";
 
