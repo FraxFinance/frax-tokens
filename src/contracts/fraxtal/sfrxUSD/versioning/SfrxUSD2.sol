@@ -6,9 +6,9 @@ import { SfrxUSD } from "src/contracts/fraxtal/sfrxUSD/versioning/SfrxUSD.sol";
 import { PermitModule } from "src/contracts/shared/core/modules/PermitModule.sol";
 import { EIP3009Module, SignatureModule } from "src/contracts/shared/core/modules/EIP3009Module.sol";
 
-/// @title FrxUSD v3.0.0
+/// @title SfrxUSD v2.0.0
 /// @notice Frax USD Stablecoin by Frax Finance
-/// @dev v3.0.0 adds ERC-1271 and EIP-3009 support
+/// @dev v2.0.0 adds ERC-1271 and EIP-3009 support
 contract SfrxUSD2 is SfrxUSD, EIP3009Module, PermitModule {
     function version() public pure override returns (string memory) {
         return "2.0.0";
