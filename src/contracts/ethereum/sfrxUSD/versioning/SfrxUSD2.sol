@@ -38,7 +38,7 @@ contract SfrxUSD2 is LinearRewardsErc4626_2, Timelock2Step {
     uint256[47] public __gap;
 
     function version() public pure virtual returns (string memory) {
-        return "2.0.0";
+        return "2.0.1";
     }
 
     /// @param _underlying The erc20 asset deposited

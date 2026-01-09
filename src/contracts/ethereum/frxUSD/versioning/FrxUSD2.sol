@@ -7,12 +7,12 @@ import { Ownable2Step } from "@openzeppelin/contracts-5.3.0/access/Ownable2Step.
 import { Ownable } from "@openzeppelin/contracts-5.3.0/access/Ownable.sol";
 import { StorageSlot } from "@openzeppelin/contracts-5.3.0/utils/StorageSlot.sol";
 
-/// @title FrxUSD
+/// @title FrxUSD2
 /**
  * @notice Combines Openzeppelin's ERC20Permit, ERC20Burnable and Ownable2Step.
  *     Also includes a list of authorized minters
  */
-/// @dev FrxUSD adheres to EIP-712/EIP-2612 and can use permits
+/// @dev FrxUSD2 adheres to EIP-712/EIP-2612 and can use permits
 contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     /// @notice Array of the non-bridge minters
     address[] public minters_array;
@@ -28,6 +28,10 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     bool public isPaused;
 
     uint256[46] private __gap;
+
+    function version() public pure virtual returns (string memory) {
+        return "2.0.1";
+    }
 
     /* ========== CONSTRUCTOR ========== */
     /// @param _ownerAddress The initial owner
