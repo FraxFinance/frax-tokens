@@ -31,8 +31,6 @@ contract SfrxUSD2 is LinearRewardsErc4626_2, Timelock2Step {
     /// @dev Mapping is used for faster verification
     mapping(address => bool) public minters;
 
-    uint256[47] public __gap;
-
     function version() public pure virtual returns (string memory) {
         return "2.0.1";
     }

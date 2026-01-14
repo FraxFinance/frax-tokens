@@ -25,8 +25,6 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     /// @notice Whether or not the contract is paused
     bool public isPaused;
 
-    uint256[46] private __gap;
-
     function version() public pure virtual returns (string memory) {
         return "2.0.1";
     }

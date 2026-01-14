@@ -9,8 +9,6 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
     /// @notice Whether or not the contract is paused
     bool public isPaused;
 
-    uint256[48] private __gap;
-
     /// @notice Upgrade version of the contract
     /// @dev Does not impact EIP712 version, which is automatically set to "1" in constructor
     function version() public pure virtual override returns (string memory) {
