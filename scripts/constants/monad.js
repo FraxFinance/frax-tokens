@@ -1,0 +1,37 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CHAIN_ID =
+  exports.LZ_CHAIN_ID =
+  exports.FRAX_PROXY_ADMIN =
+  exports.LZ_BLOCK_SEND_LIB =
+  exports.LZ_SEND_LIB_302 =
+  exports.LZ_RECEIVE_LIB_302 =
+  exports.LZ_ENDPOINT =
+  exports.REMOTEMINTREDEEMHOP =
+  exports.REMOTEHOP =
+  exports.WFRAXOFT =
+  exports.SFRXUSDOFT =
+  exports.SFRXETHOFT =
+  exports.FRXUSDOFT =
+  exports.FRXETHOFT =
+  exports.FPIOFT =
+    void 0;
+// LayerZero
+exports.FPIOFT = "0xba554f7a47f0792b9fa41a1256d4cf628bb1d028";
+exports.FRXETHOFT = "0x288f9d76019469bfeb56bb77d86afa2bf563b75b";
+exports.FRXUSDOFT = "0x58e3ee6accd124642ddb5d3f91928816be8d8ed3";
+exports.SFRXETHOFT = "0x3b4cf37a3335f21c945a40088404c715525fcb29";
+exports.SFRXUSDOFT = "0x137643f7b2c189173867b3391f6629cab46f0f1a";
+exports.WFRAXOFT = "0x29acc7c504665a5ea95344796f784095f0cfcc58";
+// FraxtalLZHop
+exports.REMOTEHOP = "0x40F66FFf44DBBee88058185F2cFE287558D7E532";
+exports.REMOTEMINTREDEEMHOP = "0x92E6892706053ee85fC1178AFFCB3803118D2C4F";
+// LayerZeroInfra
+exports.LZ_ENDPOINT = "0x6F475642a6e85809B1c36Fa62763669b1b48DD5B";
+exports.LZ_RECEIVE_LIB_302 = "0xe1844c5D63a9543023008D332Bd3d2e6f1FE1043";
+exports.LZ_SEND_LIB_302 = "0xC39161c743D0307EB9BCc9FEF03eeb9Dc4802de7";
+exports.LZ_BLOCK_SEND_LIB = "0xc1ce56b2099ca68720592583c7984cab4b6d7e7a";
+exports.FRAX_PROXY_ADMIN = "0xc2871eae630640ce1a16b39a17c498f22d76c21a";
+// Chain IDs
+exports.LZ_CHAIN_ID = 30390;
+exports.CHAIN_ID = 143;
