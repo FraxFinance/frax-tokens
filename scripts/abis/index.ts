@@ -1,0 +1,5 @@
+import OFT_ABI from "./OFT_ABI.json";
+import OFT_ADAPTER_ABI from "./OFT_ADAPTER_ABI.json";
+import OFT_MINTABLE_ADAPTER_ABI from "./OFT_MINTABLE_ADAPTER_ABI.json";
+
+export { OFT_ABI, OFT_ADAPTER_ABI, OFT_MINTABLE_ADAPTER_ABI };
