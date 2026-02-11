@@ -39,11 +39,3 @@ export const SFRXETH_OFT_STORE = "DsJYjDF5yVSopMC15q9W42v833MhWGhCxcU2J39oS3wN";
 export const SFRXUSD_OFT_STORE = "A28EK6j1euK4e6taP1KLFpGEoR1mDpXR4vtfiyCE1Nxv";
 export const WFRAX_OFT_STORE = "5vqBiG7nxNnoCst8mEVVS6ax7C1ypEEenPfcZ4kLgj9B";
 // LayerZeroInfra
-export const LZ_ENDPOINT = "76y77prsiCMvXMjuoZ5VRrhG5qYBrUMYTE5WgHqgjEn6";
-export const LZ_RECEIVE_LIB_302 = "7a4WjyR8VZ7yZz5XJAKm39BUGn5iT9CKcv2pmG9tdXVH";
-export const LZ_SEND_LIB_302 = "7a4WjyR8VZ7yZz5XJAKm39BUGn5iT9CKcv2pmG9tdXVH";
-export const LZ_BLOCK_SEND_LIB = "2XrYqmhBMPJgDsb4SVbjV1PnJBprurd5bzRCkHwiFCJB";
-
-// Chain IDs
-export const LZ_CHAIN_ID = 30168;
-export const CHAIN_ID = 0;
