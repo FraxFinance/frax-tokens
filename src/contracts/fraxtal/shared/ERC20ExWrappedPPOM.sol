@@ -170,12 +170,7 @@ contract ERC20ExWrappedPPOM is
     /// @param _interfaceId Interface ID to check.
     /// @return Whether or not the interface is supported by this contract.
     function supportsInterface(bytes4 _interfaceId) external pure virtual returns (bool) {
-        bytes4 iface1 = type(IERC165).interfaceId;
-        // Interface corresponding to the legacy L2StandardERC20.
-        bytes4 iface2 = type(ILegacyMintableERC20).interfaceId;
-        // Interface corresponding to the updated OptimismMintableERC20 (this contract).
-        bytes4 iface3 = type(IOptimismMintableERC20).interfaceId;
-        return _interfaceId == iface1 || _interfaceId == iface2 || _interfaceId == iface3;
+        return _interfaceId == type(IERC165).interfaceId;
     }
 
     /* ========== RESTRICTED FUNCTIONS [BRIDGE] ========== */
