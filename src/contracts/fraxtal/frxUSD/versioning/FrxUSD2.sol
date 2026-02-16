@@ -1,8 +1,8 @@
 pragma solidity ^0.8.0;
 
-import { ERC20PermitPermissionedOptiMintable } from "src/contracts/fraxtal/shared/ERC20PermitPermissionedOptiMintable.sol";
+import { ERC20PermitPermissionedNonBridgeableMintable } from "src/contracts/fraxtal/shared/ERC20PermitPermissionedNonBridgeableMintable.sol";
 
-contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
+contract FrxUSD2 is ERC20PermitPermissionedNonBridgeableMintable {
     /// @notice Mapping indicating which addresses are frozen
     mapping(address => bool) public isFrozen;
 
@@ -12,28 +12,10 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
     /// @notice Upgrade version of the contract
     /// @dev Does not impact EIP712 version, which is automatically set to "1" in constructor
     function version() public pure virtual override returns (string memory) {
-        return "2.0.1";
+        return "2.1.0";
     }
 
-    /// @param _creator_address The contract creator
-    /// @param _timelock_address The timelock
-    /// @param _bridge Address of the L2 standard bridge
-    /// @param _remoteToken Address of the corresponding L1 token
-    constructor(
-        address _creator_address,
-        address _timelock_address,
-        address _bridge,
-        address _remoteToken
-    )
-        ERC20PermitPermissionedOptiMintable(
-            _creator_address,
-            _timelock_address,
-            _bridge,
-            _remoteToken,
-            "Frax USD",
-            "frxUSD"
-        )
-    {}
+    constructor() ERC20PermitPermissionedNonBridgeableMintable("Frax USD", "frxUSD") {}
 
     /// @notice External admin gated function to unfreeze a set of accounts
     /// @param _owners Array of accounts to be unfrozen

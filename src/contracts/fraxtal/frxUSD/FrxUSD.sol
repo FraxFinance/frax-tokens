@@ -17,5 +17,5 @@ pragma solidity ^0.8.0;
 import { FrxUSD3 } from "src/contracts/fraxtal/frxUSD/versioning/FrxUSD3.sol";
 
 contract FrxUSD is FrxUSD3 {
-    constructor(address _bridge, address _remoteToken) FrxUSD3(_bridge, _remoteToken) {}
+    constructor() FrxUSD3() {}
 }
