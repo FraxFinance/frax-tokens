@@ -153,19 +153,6 @@ contract ERC20ExPPOMWrapped is Initializable, ERC20, IERC20Permit, IERC5267, ISe
         _cachedChainId = block.chainid;
         _cachedDomainSeparator = _buildDomainSeparator();
         _cachedThis = address(this);
-
-        // Clear old values
-        // Might not be necessary
-        //--------------------------------------
-        DEPRECATED___owner = address(0);
-        DEPRECATED___nominated_owner = address(0);
-        DEPRECATED___timelock_address = address(0);
-
-        // Loop through the minter array and set each mapping to false, and each minter_array value to 0x0
-        for (uint256 i = 0; i < DEPRECATED___minters_array.length; i++) {
-            DEPRECATED___minters[DEPRECATED___minters_array[i]] = false;
-            delete DEPRECATED___minters_array[i];
-        }
     }
 
     /* ========== EIP712 FUNCTIONS ========== */
