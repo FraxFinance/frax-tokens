@@ -149,6 +149,14 @@ library Arbitrum {
     address internal constant USDPLUSFRAXBP_POOL = 0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013;
     address internal constant VECHR = 0x9A01857f33aa382b1d5bb96C3180347862432B0d;
     address internal constant VERAM = 0xAAA343032aA79eE9a6897Dab03bef967c3289a06;
+    address internal constant FPIOFT = 0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927;
+    address internal constant FRXETHOFT = 0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050;
+    address internal constant FRXUSDOFT = 0x80Eede496655FB9047dd39d9f418d5483ED600df;
+    address internal constant SFRXETHOFT = 0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45;
+    address internal constant SFRXUSDOFT = 0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0;
+    address internal constant WFRAXOFT = 0x64445f0aecC51E94aD52d8AC56b7190e764E561a;
+    address internal constant REMOTEHOP = 0x29F5DBD0FE72d8f11271FCBE79Cb87E18a83C70A;
+    address internal constant REMOTEMINTREDEEMHOP = 0xa46A266dCBf199a71532c76967e200994C5A0D6d;
 }
 
 abstract contract AddressHelperArbitrum is TestBase {
@@ -314,5 +322,13 @@ abstract contract AddressHelperArbitrum is TestBase {
         vm.label(0xb34a7d1444a707349Bc7b981B7F2E1f20F81F013, "Constants.ARBI_USDPLUSFRAXBP_POOL");
         vm.label(0x9A01857f33aa382b1d5bb96C3180347862432B0d, "Constants.ARBI_VECHR");
         vm.label(0xAAA343032aA79eE9a6897Dab03bef967c3289a06, "Constants.ARBI_VERAM");
+        vm.label(0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927, "Constants.ARBI_FPIOFT");
+        vm.label(0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050, "Constants.ARBI_FRXETHOFT");
+        vm.label(0x80Eede496655FB9047dd39d9f418d5483ED600df, "Constants.ARBI_FRXUSDOFT");
+        vm.label(0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45, "Constants.ARBI_SFRXETHOFT");
+        vm.label(0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0, "Constants.ARBI_SFRXUSDOFT");
+        vm.label(0x64445f0aecC51E94aD52d8AC56b7190e764E561a, "Constants.ARBI_WFRAXOFT");
+        vm.label(0x29F5DBD0FE72d8f11271FCBE79Cb87E18a83C70A, "Constants.ARBI_REMOTEHOP");
+        vm.label(0xa46A266dCBf199a71532c76967e200994C5A0D6d, "Constants.ARBI_REMOTEMINTREDEEMHOP");
     }
 }

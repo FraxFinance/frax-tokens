@@ -1,5 +1,6 @@
 import * as fs from "fs/promises";
 import path from "path";
+import { isAddress } from "viem"
 
 import * as constants from "./constants";
 
@@ -22,11 +23,14 @@ const networkPrefixes = {
   FraxtalTestnetL2: "FXTL_TN_L2",
   Holesky: "HOLESKY",
   Hyperliquid: "HYPE",
+  Ink: "INK",
   Katana: "KTN",
   Mainnet: "ETH",
+  Movement:"MOVE",
   Moonbeam: "MNBM",
   Moonriver: "MOVR",
   Optimism: "OPTI",
+  Plumephoenix: "PLUME",
   Polygon: "POLY",
   PolygonzkEVM: "POLY_ZKEVM",
   Scroll: "SCROLL",
@@ -36,7 +40,8 @@ const networkPrefixes = {
   Unichain: "UNI",
   Worldchain: "WRLD",
   Linea: "LINEA",
-  Zksync:"ZKSYNC"
+  XLayer: "XLAYER",
+  Zksync: "ZKSYNC"
 };
 
 const REMOVE_DUPLICATE_LABELS = false;
@@ -48,22 +53,27 @@ async function main() {
   // Prepare seen/duplicate values
   const seenValues = [];
 
-  // Generate the files
-  for (let n = 0; n < networks.length; n++) {
-    const networkName = networks[n];
-    const outputString = await handleSingleNetwork(networkName, constants[networkName], seenValues);
-
-    const finalString =
-      `// SPDX-License-Identifier: ISC
+  const headerString = `// SPDX-License-Identifier: ISC
 pragma solidity >=0.8.0;
 
 // **NOTE** Generated code, do not modify.  Run 'npm run generate:constants'.
 
 import { TestBase } from "forge-std/Test.sol";
 
-	` + outputString;
+	`
+
+  let finalConstantsString = headerString;
+
+  // Generate the files
+  for (let n = 0; n < networks.length; n++) {
+    const networkName = networks[n];
+    const outputString = await handleSingleNetwork(networkName, constants[networkName], seenValues);
+
+    const finalString = headerString + outputString;
+    finalConstantsString = finalConstantsString + outputString;
     await fs.writeFile(path.resolve("src/contracts/chain-constants", `${networkName}.sol`), finalString);
   }
+  await fs.writeFile(path.resolve("src/", `Constants.sol`), finalConstantsString);
 }
 
 async function handleSingleNetwork(networkName, constants, seenValues) {
@@ -73,7 +83,12 @@ async function handleSingleNetwork(networkName, constants, seenValues) {
       if (typeof value === "string") {
         // Determine whether it is an address or a string
         if (value.startsWith("0x")) {
-          return `    address internal constant ${key} = ${value};`;
+          if (isAddress(value)) { return `    address internal constant ${key} = ${value};`; }
+          else if (value.length === 66) {
+            return `    bytes32 internal constant ${key} = ${value};`;
+          } else {
+            throw new Error("Unidentifed constant type")
+          }
         }
         return `    string internal constant ${key} = "${value}";`;
       } else {
@@ -109,6 +124,11 @@ async function handleSingleNetwork(networkName, constants, seenValues) {
     }
   });
 
+  const contractString = `library ${networkName} {
+${constantString}
+}
+`;
+
   // Generate the labels for the entries
   const labelStrings = Object.entries(constantsToLabel)
     .map(([key, value]) => {
@@ -119,13 +139,11 @@ async function handleSingleNetwork(networkName, constants, seenValues) {
       return `        vm.label(${value}, "Constants.${networkPrefixes[networkName]}_${key}");`;
     })
     .join("\n");
-  const contractString = `library ${networkName} {
-${constantString}
-}
-`;
 
-  // if (networkName == "Mainnet") {
-  const constantsHelper = `
+  let constantsHelper = "";
+
+  if (networkName != "Aptos" && networkName != "Movement" && networkName != "Solana") {
+    constantsHelper = constantsHelper + `
 abstract contract AddressHelper${networkName} is TestBase {
     constructor() {
         labelConstants();
@@ -136,6 +154,7 @@ ${labelStrings}
     }
 }
 `;
+  }
   return contractString + constantsHelper;
   // }
   // return contractString;

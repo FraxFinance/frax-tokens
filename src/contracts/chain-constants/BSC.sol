@@ -48,6 +48,14 @@ library BSC {
     address internal constant APESWAP_CANFRAX_USDC = 0x885BE9bCbCdcB70c59F56A78ae64A820e0448589;
     address internal constant APESWAP_CANFXS_USDC = 0x84f2781E4E60f97D2963260A7b20D883F04F0d20;
     address internal constant SADDLE_FRAX_BUSD = 0xBD0091CC77Fd3bDb620985a1dD8D3f94E071CCE3;
+    address internal constant FPIOFT = 0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927;
+    address internal constant FRXETHOFT = 0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050;
+    address internal constant FRXUSDOFT = 0x80Eede496655FB9047dd39d9f418d5483ED600df;
+    address internal constant SFRXETHOFT = 0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45;
+    address internal constant SFRXUSDOFT = 0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0;
+    address internal constant WFRAXOFT = 0x64445f0aecC51E94aD52d8AC56b7190e764E561a;
+    address internal constant REMOTEHOP = 0x452420df4AC1e3db5429b5FD629f3047482C543C;
+    address internal constant REMOTEMINTREDEEMHOP = 0xdee45510b42Cb0678C8A61D043C698aF66b0d852;
 }
 
 abstract contract AddressHelperBSC is TestBase {
@@ -56,61 +64,75 @@ abstract contract AddressHelperBSC is TestBase {
     }
 
     function labelConstants() public {
-        vm.label(0x90C97F71E18723b0Cf0dfa30ee176Ab653E89F40, "Constants.BSC_FRAX");
-        vm.label(0xe48A3d7d0Bc88d552f730B62c006bC925eadB9eE, "Constants.BSC_FXS");
-        vm.label(0x2Dd1B4D4548aCCeA497050619965f91f78b3b532, "Constants.BSC_FPI");
-        vm.label(0xD1738eB733A636d1b8665f48bC8a24dA889c2562, "Constants.BSC_FPIS");
-        vm.label(0x64048A7eEcF3a2F1BA9e144aAc3D7dB6e58F555e, "Constants.BSC_FRXETH");
-        vm.label(0x3Cd55356433C89E50DC51aB07EE0fa0A95623D53, "Constants.BSC_SFRXETH");
-        vm.label(0xa63f56985F9C7F3bc9fFc5685535649e0C1a55f3, "Constants.BSC_SFRAX");
-        vm.label(0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9, "Constants.BSC_APESWAP_CANFRAX_BUSD");
-        vm.label(0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9, "Constants.BSC_APESWAP_CANFXS_WBNB");
-        vm.label(0x5e1F728C0123f7e8B237F61D0105bf9CBd8867B5, "Constants.BSC_IMPOSSIBLE_FRAX_IF");
-        vm.label(0x5BE579e5fFF39a958E6269C6D011cd5f21e2cc32, "Constants.BSC_IMPOSSIBLE_FRAX_FXS");
-        vm.label(0x6022bA7e5A70E1bAA98d47a566F3495A26511b25, "Constants.BSC_PLANET_FINANCE_FRAX_LENDING");
+        vm.label(0x90C97F71E18723b0Cf0dfa30ee176Ab653E89F40, "Constants.undefined_FRAX");
+        vm.label(0xe48A3d7d0Bc88d552f730B62c006bC925eadB9eE, "Constants.undefined_FXS");
+        vm.label(0x2Dd1B4D4548aCCeA497050619965f91f78b3b532, "Constants.undefined_FPI");
+        vm.label(0xD1738eB733A636d1b8665f48bC8a24dA889c2562, "Constants.undefined_FPIS");
+        vm.label(0x64048A7eEcF3a2F1BA9e144aAc3D7dB6e58F555e, "Constants.undefined_FRXETH");
+        vm.label(0x3Cd55356433C89E50DC51aB07EE0fa0A95623D53, "Constants.undefined_SFRXETH");
+        vm.label(0xa63f56985F9C7F3bc9fFc5685535649e0C1a55f3, "Constants.undefined_SFRAX");
+        vm.label(0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9, "Constants.undefined_APESWAP_CANFRAX_BUSD");
+        vm.label(0x5c8D727b265DBAfaba67E050f2f739cAeEB4A6F9, "Constants.undefined_APESWAP_CANFXS_WBNB");
+        vm.label(0x5e1F728C0123f7e8B237F61D0105bf9CBd8867B5, "Constants.undefined_IMPOSSIBLE_FRAX_IF");
+        vm.label(0x5BE579e5fFF39a958E6269C6D011cd5f21e2cc32, "Constants.undefined_IMPOSSIBLE_FRAX_FXS");
+        vm.label(0x6022bA7e5A70E1bAA98d47a566F3495A26511b25, "Constants.undefined_PLANET_FINANCE_FRAX_LENDING");
         vm.label(
             0x10Ef54F944639764d2d5Efa272262f06cfaF09AE,
-            "Constants.BSC_FRAXFERRY_V1__ETHEREUM_BSC__FRAX__BSC_SIDE"
+            "Constants.undefined_FRAXFERRY_V1__ETHEREUM_BSC__FRAX__BSC_SIDE"
         );
-        vm.label(0x5CD3d6465cd21b645F15175840f4659228C6195c, "Constants.BSC_FRAXFERRY_V2__ETHEREUM_BSC__FXS__BSC_SIDE");
-        vm.label(0x1B01514A2B3CdEf16fD3c680a818A0Ab97Da8a09, "Constants.BSC_FRAXFERRY_V2__ETHEREUM_BSC__FPI__BSC_SIDE");
+        vm.label(
+            0x5CD3d6465cd21b645F15175840f4659228C6195c,
+            "Constants.undefined_FRAXFERRY_V2__ETHEREUM_BSC__FXS__BSC_SIDE"
+        );
+        vm.label(
+            0x1B01514A2B3CdEf16fD3c680a818A0Ab97Da8a09,
+            "Constants.undefined_FRAXFERRY_V2__ETHEREUM_BSC__FPI__BSC_SIDE"
+        );
         vm.label(
             0x0248940C22D2586450dd5145E81B7Fc0CA4Dd4a2,
-            "Constants.BSC_FRAXFERRY_V2__ETHEREUM_BSC__FPIS__BSC_SIDE"
+            "Constants.undefined_FRAXFERRY_V2__ETHEREUM_BSC__FPIS__BSC_SIDE"
         );
         vm.label(
             0xB7C974530e59017DF7FA06b1EBD9e8a1E9aceC29,
-            "Constants.BSC_FRAXFERRY_V2__ETHEREUM_BSC__FRXETH__BSC_SIDE"
+            "Constants.undefined_FRAXFERRY_V2__ETHEREUM_BSC__FRXETH__BSC_SIDE"
         );
         vm.label(
             0x612015939f70C87E2041cc5daD909101c1A2383F,
-            "Constants.BSC_FRAXFERRY_V2__ETHEREUM_BSC__SFRXETH__BSC_SIDE"
+            "Constants.undefined_FRAXFERRY_V2__ETHEREUM_BSC__SFRXETH__BSC_SIDE"
         );
         vm.label(
             0x5E8422345238F34275888049021821E8E08CAa1f,
-            "Constants.BSC_FRAXFERRY_V2__ETHEREUM_BSC__SFRAX__BSC_SIDE"
+            "Constants.undefined_FRAXFERRY_V2__ETHEREUM_BSC__SFRAX__BSC_SIDE"
         );
-        vm.label(0xBB437059584e30598b3AF0154472E47E6e2a45B9, "Constants.BSC_CAPTAIN");
-        vm.label(0xBB437059584e30598b3AF0154472E47E6e2a45B9, "Constants.BSC_FIRST_OFFICER");
-        vm.label(0xBB437059584e30598b3AF0154472E47E6e2a45B9, "Constants.BSC_CREWMEMBER");
-        vm.label(0x1B3C6BdEACdc4DD9B0C8E3e2Fd222b4581a52A1A, "Constants.BSC_COMBO_ORACLE");
-        vm.label(0x8159D9CD28B7A140Fd92311C1E5c667d97176727, "Constants.BSC_COMBO_ORACLE_UNIV2_UNIV3");
-        vm.label(0xa007a9716dba05289df85A90d0Fd9D39BEE808dE, "Constants.BSC_FRAXSWAP_FACTORY_V1");
-        vm.label(0xf89e6CA06121B6d4370f4B196Ae458e8b969A011, "Constants.BSC_FRAXSWAP_FACTORY_V2");
-        vm.label(0x0000000000000000000000000000000000000000, "Constants.BSC_FRAXSWAP_ROUTER_MULTI_HOP");
-        vm.label(0x0AE84c1A6E142Ed90f8A35a7E7B216CB25469E37, "Constants.BSC_FRAXSWAP_ROUTER_V1");
-        vm.label(0x67F755137E0AE2a2aa0323c047715Bf6523116E5, "Constants.BSC_FRAXSWAP_ROUTER_V2");
-        vm.label(0xC86B106F76ef5b9A085071365eD5355592A7aFa4, "Constants.BSC_FRAXSWAP_V1_FRAX_FXS");
-        vm.label(0x84eE532a0d4238f5fC4a1E8c043f8749eD4F274D, "Constants.BSC_FRAXSWAP_V1_FRAX_WBNB");
-        vm.label(0xF51709f61447E2647528CCC9030d6FE492C30D63, "Constants.BSC_FRAXSWAP_V2_FRAX_FXS");
-        vm.label(0x14732123c443f8E815D5c64f3C7ecb63bCeEab74, "Constants.BSC_FRAXSWAP_V2_FRAX_WBNB");
-        vm.label(0x8811Da0385cCf1848B21475A42eA4D07Fc5d964a, "Constants.BSC_COMPTROLLER");
-        vm.label(0x49f9cbf5333d8e50c9BE76c775777DB2ACb1d456, "Constants.BSC_FPI_COMPTROLLER");
-        vm.label(0x6022bA7e5A70E1bAA98d47a566F3495A26511b25, "Constants.BSC_GFRAX");
-        vm.label(0x489c8fF79245f14AEEE9520d28209844790cB979, "Constants.BSC_APESWAP_CANFRAX_CANFXS");
-        vm.label(0x16BDb03E6074759943149eBB1526DDfD1AA5fc56, "Constants.BSC_APESWAP_CANFRAX_WBNB");
-        vm.label(0x885BE9bCbCdcB70c59F56A78ae64A820e0448589, "Constants.BSC_APESWAP_CANFRAX_USDC");
-        vm.label(0x84f2781E4E60f97D2963260A7b20D883F04F0d20, "Constants.BSC_APESWAP_CANFXS_USDC");
-        vm.label(0xBD0091CC77Fd3bDb620985a1dD8D3f94E071CCE3, "Constants.BSC_SADDLE_FRAX_BUSD");
+        vm.label(0xBB437059584e30598b3AF0154472E47E6e2a45B9, "Constants.undefined_CAPTAIN");
+        vm.label(0xBB437059584e30598b3AF0154472E47E6e2a45B9, "Constants.undefined_FIRST_OFFICER");
+        vm.label(0xBB437059584e30598b3AF0154472E47E6e2a45B9, "Constants.undefined_CREWMEMBER");
+        vm.label(0x1B3C6BdEACdc4DD9B0C8E3e2Fd222b4581a52A1A, "Constants.undefined_COMBO_ORACLE");
+        vm.label(0x8159D9CD28B7A140Fd92311C1E5c667d97176727, "Constants.undefined_COMBO_ORACLE_UNIV2_UNIV3");
+        vm.label(0xa007a9716dba05289df85A90d0Fd9D39BEE808dE, "Constants.undefined_FRAXSWAP_FACTORY_V1");
+        vm.label(0xf89e6CA06121B6d4370f4B196Ae458e8b969A011, "Constants.undefined_FRAXSWAP_FACTORY_V2");
+        vm.label(0x0000000000000000000000000000000000000000, "Constants.undefined_FRAXSWAP_ROUTER_MULTI_HOP");
+        vm.label(0x0AE84c1A6E142Ed90f8A35a7E7B216CB25469E37, "Constants.undefined_FRAXSWAP_ROUTER_V1");
+        vm.label(0x67F755137E0AE2a2aa0323c047715Bf6523116E5, "Constants.undefined_FRAXSWAP_ROUTER_V2");
+        vm.label(0xC86B106F76ef5b9A085071365eD5355592A7aFa4, "Constants.undefined_FRAXSWAP_V1_FRAX_FXS");
+        vm.label(0x84eE532a0d4238f5fC4a1E8c043f8749eD4F274D, "Constants.undefined_FRAXSWAP_V1_FRAX_WBNB");
+        vm.label(0xF51709f61447E2647528CCC9030d6FE492C30D63, "Constants.undefined_FRAXSWAP_V2_FRAX_FXS");
+        vm.label(0x14732123c443f8E815D5c64f3C7ecb63bCeEab74, "Constants.undefined_FRAXSWAP_V2_FRAX_WBNB");
+        vm.label(0x8811Da0385cCf1848B21475A42eA4D07Fc5d964a, "Constants.undefined_COMPTROLLER");
+        vm.label(0x49f9cbf5333d8e50c9BE76c775777DB2ACb1d456, "Constants.undefined_FPI_COMPTROLLER");
+        vm.label(0x6022bA7e5A70E1bAA98d47a566F3495A26511b25, "Constants.undefined_GFRAX");
+        vm.label(0x489c8fF79245f14AEEE9520d28209844790cB979, "Constants.undefined_APESWAP_CANFRAX_CANFXS");
+        vm.label(0x16BDb03E6074759943149eBB1526DDfD1AA5fc56, "Constants.undefined_APESWAP_CANFRAX_WBNB");
+        vm.label(0x885BE9bCbCdcB70c59F56A78ae64A820e0448589, "Constants.undefined_APESWAP_CANFRAX_USDC");
+        vm.label(0x84f2781E4E60f97D2963260A7b20D883F04F0d20, "Constants.undefined_APESWAP_CANFXS_USDC");
+        vm.label(0xBD0091CC77Fd3bDb620985a1dD8D3f94E071CCE3, "Constants.undefined_SADDLE_FRAX_BUSD");
+        vm.label(0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927, "Constants.undefined_FPIOFT");
+        vm.label(0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050, "Constants.undefined_FRXETHOFT");
+        vm.label(0x80Eede496655FB9047dd39d9f418d5483ED600df, "Constants.undefined_FRXUSDOFT");
+        vm.label(0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45, "Constants.undefined_SFRXETHOFT");
+        vm.label(0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0, "Constants.undefined_SFRXUSDOFT");
+        vm.label(0x64445f0aecC51E94aD52d8AC56b7190e764E561a, "Constants.undefined_WFRAXOFT");
+        vm.label(0x452420df4AC1e3db5429b5FD629f3047482C543C, "Constants.undefined_REMOTEHOP");
+        vm.label(0xdee45510b42Cb0678C8A61D043C698aF66b0d852, "Constants.undefined_REMOTEMINTREDEEMHOP");
     }
 }

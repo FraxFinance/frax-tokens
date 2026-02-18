@@ -6,7 +6,7 @@ pragma solidity >=0.8.0;
 import { TestBase } from "forge-std/Test.sol";
 
 library Holesky {
-    uint256 internal constant CHAIN_ID = 17_000;
+    uint256 internal constant CHAIN_ID = 17000;
     address internal constant FRAX = 0x0304A365C0fbb4b1Ad423887861b9b69a5f0c00E;
     address internal constant FXS = 0x4e7300F74F59AFaEcCdc0d434758Df9be238F0BF;
     address internal constant FPI = 0xfBCB0F967817c924f83e26e04F0FB28ED4d6276F;

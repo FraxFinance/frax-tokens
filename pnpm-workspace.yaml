@@ -1,0 +1,9 @@
+packages: []
+
+onlyBuiltDependencies:
+  - "frax-standard-solidity"
+  - "forge-std"
+  - "ds-test"
+  - "solmate"
+  - "solidity-bytes-utils"
+  - "@fraxfinance/layerzero-v2-upgradeable"

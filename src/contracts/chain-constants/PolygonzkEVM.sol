@@ -32,6 +32,14 @@ library PolygonzkEVM {
     address internal constant CREWMEMBER = 0xBB437059584e30598b3AF0154472E47E6e2a45B9;
     address internal constant COMBO_ORACLE = 0x030BD43af99cb72B51dA233A73F7697Cd2461C0b;
     address internal constant COMBO_ORACLE_UNIV2_UNIV3 = 0x967d0c5f7362A54b156cf2831Fb17dA8681FAD7D;
+    address internal constant FPIOFT = 0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927;
+    address internal constant FRXETHOFT = 0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050;
+    address internal constant FRXUSDOFT = 0x80Eede496655FB9047dd39d9f418d5483ED600df;
+    address internal constant SFRXETHOFT = 0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45;
+    address internal constant SFRXUSDOFT = 0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0;
+    address internal constant WFRAXOFT = 0x64445f0aecC51E94aD52d8AC56b7190e764E561a;
+    address internal constant REMOTEHOP = 0x111ddab65Af5fF96b674400246699ED40F550De1;
+    address internal constant REMOTEMINTREDEEMHOP = 0xc71BF5Ee4740405030eF521F18A96eA14fec802D;
 }
 
 abstract contract AddressHelperPolygonzkEVM is TestBase {
@@ -80,5 +88,13 @@ abstract contract AddressHelperPolygonzkEVM is TestBase {
         vm.label(0xBB437059584e30598b3AF0154472E47E6e2a45B9, "Constants.POLY_ZKEVM_CREWMEMBER");
         vm.label(0x030BD43af99cb72B51dA233A73F7697Cd2461C0b, "Constants.POLY_ZKEVM_COMBO_ORACLE");
         vm.label(0x967d0c5f7362A54b156cf2831Fb17dA8681FAD7D, "Constants.POLY_ZKEVM_COMBO_ORACLE_UNIV2_UNIV3");
+        vm.label(0x90581eCa9469D8D7F5D3B60f4715027aDFCf7927, "Constants.POLY_ZKEVM_FPIOFT");
+        vm.label(0x43eDD7f3831b08FE70B7555ddD373C8bF65a9050, "Constants.POLY_ZKEVM_FRXETHOFT");
+        vm.label(0x80Eede496655FB9047dd39d9f418d5483ED600df, "Constants.POLY_ZKEVM_FRXUSDOFT");
+        vm.label(0x3Ec3849C33291a9eF4c5dB86De593EB4A37fDe45, "Constants.POLY_ZKEVM_SFRXETHOFT");
+        vm.label(0x5Bff88cA1442c2496f7E475E9e7786383Bc070c0, "Constants.POLY_ZKEVM_SFRXUSDOFT");
+        vm.label(0x64445f0aecC51E94aD52d8AC56b7190e764E561a, "Constants.POLY_ZKEVM_WFRAXOFT");
+        vm.label(0x111ddab65Af5fF96b674400246699ED40F550De1, "Constants.POLY_ZKEVM_REMOTEHOP");
+        vm.label(0xc71BF5Ee4740405030eF521F18A96eA14fec802D, "Constants.POLY_ZKEVM_REMOTEMINTREDEEMHOP");
     }
 }
