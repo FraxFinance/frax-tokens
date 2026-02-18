@@ -14,12 +14,8 @@ pragma solidity ^0.8.0;
 // Frax Finance: https://github.com/FraxFinance
 // Tested for 18-decimal underlying assets only
 
-import { FrxUSD2 } from "src/contracts/ethereum/frxUSD/versioning/FrxUSD2.sol";
+import { FrxUSD3 } from "src/contracts/ethereum/frxUSD/versioning/FrxUSD3.sol";
 
-contract FrxUSD is FrxUSD2 {
-    constructor(
-        address _ownerAddress,
-        string memory _name,
-        string memory _symbol
-    ) FrxUSD2(_ownerAddress, _name, _symbol) {}
+contract FrxUSD is FrxUSD3 {
+    constructor() FrxUSD3() {}
 }

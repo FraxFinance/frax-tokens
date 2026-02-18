@@ -14,17 +14,13 @@ pragma solidity ^0.8.21;
 // Frax Finance: https://github.com/FraxFinance
 
 import { ERC20, ERC4626 } from "solmate/mixins/ERC4626.sol";
-import { SafeCastLib } from "solmate/utils/SafeCastLib.sol";
-import { ln, mul, div, pow, exp, wrap } from "@prb/math/src/ud60x18/Math.sol";
+import { ln, mul, div, exp, wrap } from "@prb/math/src/ud60x18/Math.sol";
 import { convert } from "@prb/math/src/ud60x18/Conversions.sol";
 import { UD60x18 } from "@prb/math/src/ud60x18/ValueType.sol";
-import "forge-std/console2.sol";
 
 /// @title LinearRewardsErc4626
 /// @notice An ERC4626 Vault implementation with linear rewards
 abstract contract LinearRewardsErc4626_2 is ERC4626 {
-    using SafeCastLib for *;
-
     /// @notice The precision of all integer calculations
     uint256 public constant PRECISION = 1e18;
 
