@@ -4,10 +4,7 @@ import { ERC20PermitPermissionedNonBridgeableMintable } from "src/contracts/frax
 import { Initializable } from "@openzeppelin/contracts-5.2.0/proxy/utils/Initializable.sol";
 
 contract ERC20PPNBMInitializable is ERC20PermitPermissionedNonBridgeableMintable, Initializable {
-    constructor(
-        string memory _name,
-        string memory _version
-    ) ERC20PermitPermissionedNonBridgeableMintable(_name, _version) {
+    constructor() ERC20PermitPermissionedNonBridgeableMintable("", "") {
         _disableInitializers();
     }
 

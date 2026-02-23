@@ -17,16 +17,16 @@ contract DeployImps is Script {
         new FrxETH();
         new FrxUSDInitializable();
 
-        // These contracts are all based on the same architecture and should be initialized with the same values of construction
+        // These contracts are all based on the same architecture and should be initialized with their own respective values
 
         // sfrxUSD
-        new ERC20PPNBMInitializable("Staked Frax USD", "1");
+        new ERC20PPNBMInitializable();
         // sfrxETH
-        new ERC20PPNBMInitializable("Staked Frax Ether", "1");
+        new ERC20PPNBMInitializable();
         // FPI
-        new ERC20PPNBMInitializable("Frax Price Index", "1");
+        new ERC20PPNBMInitializable();
         // frxBTC
-        new ERC20PPNBMInitializable("Frax Bitcoin", "1");
+        new ERC20PPNBMInitializable();
 
         vm.stopBroadcast();
     }
