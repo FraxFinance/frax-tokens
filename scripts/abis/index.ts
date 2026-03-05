@@ -9,6 +9,7 @@ import RECEIVE_ULN302_ABI from "./RECEIVE_ULN302_ABI.json";
 import REMOTE_HOP_ABI from "./REMOTE_HOP_ABI.json";
 import REMOTE_MINT_REDEEM_HOP_ABI from "./REMOTE_MINT_REDEEM_HOP.json";
 import SEND_ULN302_ABI from "./SEND_ULN302_ABI.json";
+import HOP_V2_ABI from "./HOP_V2_ABI.json";
 export { ERC20ABI } from "./ERC20";
 
 export {
@@ -23,4 +24,5 @@ export {
   REMOTE_HOP_ABI,
   REMOTE_MINT_REDEEM_HOP_ABI,
   SEND_ULN302_ABI,
+  HOP_V2_ABI,
 };

@@ -5,7 +5,8 @@ var __importDefault =
     return mod && mod.__esModule ? mod : { default: mod };
   };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SEND_ULN302_ABI =
+exports.HOP_V2_ABI =
+  exports.SEND_ULN302_ABI =
   exports.REMOTE_MINT_REDEEM_HOP_ABI =
   exports.REMOTE_HOP_ABI =
   exports.RECEIVE_ULN302_ABI =
@@ -40,6 +41,8 @@ const REMOTE_MINT_REDEEM_HOP_json_1 = __importDefault(require("./REMOTE_MINT_RED
 exports.REMOTE_MINT_REDEEM_HOP_ABI = REMOTE_MINT_REDEEM_HOP_json_1.default;
 const SEND_ULN302_ABI_json_1 = __importDefault(require("./SEND_ULN302_ABI.json"));
 exports.SEND_ULN302_ABI = SEND_ULN302_ABI_json_1.default;
+const HOP_V2_ABI_json_1 = __importDefault(require("./HOP_V2_ABI.json"));
+exports.HOP_V2_ABI = HOP_V2_ABI_json_1.default;
 var ERC20_1 = require("./ERC20");
 Object.defineProperty(exports, "ERC20ABI", {
   enumerable: true,
