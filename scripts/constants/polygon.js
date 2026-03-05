@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LZ_ENDPOINT =
+exports.FRAX_PROXY_ADMIN =
   exports.REMOTEMINTREDEEMHOP =
   exports.REMOTEHOP =
   exports.WFRAXOFT =
@@ -51,13 +51,7 @@ exports.LZ_ENDPOINT =
   exports.FXS =
   exports.FRAX =
     void 0;
-exports.CHAIN_ID =
-  exports.LZ_CHAIN_ID =
-  exports.FRAX_PROXY_ADMIN =
-  exports.LZ_BLOCK_SEND_LIB =
-  exports.LZ_SEND_LIB_302 =
-  exports.LZ_RECEIVE_LIB_302 =
-    void 0;
+exports.REMOTEADMINV2 = exports.REMOTEHOPV2 = void 0;
 // Canonicals
 exports.FRAX = "0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89";
 exports.FXS = "0x1a3acf6D19267E2d3e7f898f42803e90C9219062";
@@ -119,11 +113,7 @@ exports.WFRAXOFT = "0x64445f0aecC51E94aD52d8AC56b7190e764E561a";
 exports.REMOTEHOP = "0xf74D38A26948E9DDa53eD85cF03C6b1188FbB30C";
 exports.REMOTEMINTREDEEMHOP = "0x5658e82E330e094627D9b362ed0E137eA06673C4";
 // LayerZeroInfra
-exports.LZ_ENDPOINT = "0x1a44076050125825900e736c501f859c50fE728c";
-exports.LZ_RECEIVE_LIB_302 = "0x1322871e4ab09Bc7f5717189434f97bBD9546e95";
-exports.LZ_SEND_LIB_302 = "0x6c26c61a97006888ea9E4FA36584c7df57Cd9dA3";
-exports.LZ_BLOCK_SEND_LIB = "0x1ccbf0db9c192d969de57e25b3ff09a25bb1d862";
 exports.FRAX_PROXY_ADMIN = "0x223a681fc5c5522c85c96157c0efa18cd6c5405c";
-// Chain IDs
-exports.LZ_CHAIN_ID = 30109;
-exports.CHAIN_ID = 137;
+// HopV2
+exports.REMOTEHOPV2 = "0x0000006D38568b00B457580b734e0076C62de659";
+exports.REMOTEADMINV2 = "0x954286118E93df807aB6f99aE0454f8710f0a8B9";

@@ -1,0 +1,11 @@
+export declare const FPIOFT = "0xba554f7a47f0792b9fa41a1256d4cf628bb1d028";
+export declare const FRXETHOFT = "0x288f9d76019469bfeb56bb77d86afa2bf563b75b";
+export declare const FRXUSDOFT = "0x58e3ee6accd124642ddb5d3f91928816be8d8ed3";
+export declare const SFRXETHOFT = "0x3b4cf37a3335f21c945a40088404c715525fcb29";
+export declare const SFRXUSDOFT = "0x137643f7b2c189173867b3391f6629cab46f0f1a";
+export declare const WFRAXOFT = "0x29acc7c504665a5ea95344796f784095f0cfcc58";
+export declare const REMOTEHOP = "0x40F66FFf44DBBee88058185F2cFE287558D7E532";
+export declare const REMOTEMINTREDEEMHOP = "0x92E6892706053ee85fC1178AFFCB3803118D2C4F";
+export declare const FRAX_PROXY_ADMIN = "0xc2871eae630640ce1a16b39a17c498f22d76c21a";
+export declare const REMOTEHOPV2 = "0x0000006D38568b00B457580b734e0076C62de659";
+export declare const REMOTEADMINV2 = "0x954286118E93df807aB6f99aE0454f8710f0a8B9";
