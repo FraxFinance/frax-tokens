@@ -1,0 +1,29 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.REMOTEADMINV2 =
+  exports.REMOTEHOPV2 =
+  exports.FRAX_PROXY_ADMIN =
+  exports.REMOTEMINTREDEEMHOP =
+  exports.REMOTEHOP =
+  exports.WFRAXOFT =
+  exports.SFRXUSDOFT =
+  exports.SFRXETHOFT =
+  exports.FRXUSDOFT =
+  exports.FRXETHOFT =
+  exports.FPIOFT =
+    void 0;
+// LayerZero
+exports.FPIOFT = "0xba554f7a47f0792b9fa41a1256d4cf628bb1d028";
+exports.FRXETHOFT = "0x288f9d76019469bfeb56bb77d86afa2bf563b75b";
+exports.FRXUSDOFT = "0x58e3ee6accd124642ddb5d3f91928816be8d8ed3";
+exports.SFRXETHOFT = "0x3b4cf37a3335f21c945a40088404c715525fcb29";
+exports.SFRXUSDOFT = "0x137643f7b2c189173867b3391f6629cab46f0f1a";
+exports.WFRAXOFT = "0x29acc7c504665a5ea95344796f784095f0cfcc58";
+// FraxtalLZHop
+exports.REMOTEHOP = "0x40F66FFf44DBBee88058185F2cFE287558D7E532";
+exports.REMOTEMINTREDEEMHOP = "0x92E6892706053ee85fC1178AFFCB3803118D2C4F";
+// LayerZeroInfra
+exports.FRAX_PROXY_ADMIN = "0xc2871eae630640ce1a16b39a17c498f22d76c21a";
+// HopV2
+exports.REMOTEHOPV2 = "0x0000006D38568b00B457580b734e0076C62de659";
+exports.REMOTEADMINV2 = "0x4bE0942c2CbFd741DB5906CF2831c1AF29fcEa55";
