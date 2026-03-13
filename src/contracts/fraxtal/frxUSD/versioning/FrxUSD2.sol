@@ -9,6 +9,9 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
     /// @notice Whether or not the contract is paused
     bool public isPaused;
 
+    /// @notice Mapping indicating which addresses can freeze accounts
+    mapping(address => bool) public isFreezer;
+
     /// @notice Upgrade version of the contract
     /// @dev Does not impact EIP712 version, which is automatically set to "1" in constructor
     function version() public pure virtual override returns (string memory) {
@@ -35,6 +38,18 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
         )
     {}
 
+    function addFreezer(address _freezer) external onlyOwner {
+        if (isFreezer[_freezer]) revert AlreadyFreezer();
+        isFreezer[_freezer] = true;
+        emit AddFreezer(_freezer);
+    }
+
+    function removeFreezer(address _freezer) external onlyOwner {
+        if (!isFreezer[_freezer]) revert NotFreezer();
+        isFreezer[_freezer] = false;
+        emit RemoveFreezer(_freezer);
+    }
+
     /// @notice External admin gated function to unfreeze a set of accounts
     /// @param _owners Array of accounts to be unfrozen
     function thawMany(address[] memory _owners) external onlyOwner {
@@ -52,7 +67,8 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
 
     /// @notice External admin gated function to batch freeze a set of accounts
     /// @param _owners Array of accounts to be frozen
-    function freezeMany(address[] memory _owners) external onlyOwner {
+    function freezeMany(address[] memory _owners) external {
+        if (!isFreezer[msg.sender] && msg.sender != owner) revert NotFreezer();
         uint256 len = _owners.length;
         for (uint256 i; i < len; ++i) {
             _freeze(_owners[i]);
@@ -61,7 +77,8 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
 
     /// @notice External admin gated function to freeze a given account
     /// @param _owner The account to be frozen
-    function freeze(address _owner) external onlyOwner {
+    function freeze(address _owner) external {
+        if (!isFreezer[msg.sender] && msg.sender != owner) revert NotFreezer();
         _freeze(_owner);
     }
 
@@ -147,8 +164,18 @@ contract FrxUSD2 is ERC20PermitPermissionedOptiMintable {
     /// @param account The account being thawed
     event AccountThawed(address account);
 
+    /// @notice Event Emitted when an address is added as a freezer
+    /// @param account The account being added as a freezer
+    event AddFreezer(address account);
+
+    /// @notice Event Emitted when an address is removed as a freezer
+    /// @param account The account being removed as a freezer
+    event RemoveFreezer(address account);
+
     /* ========== ERRORS ========== */
     error ArrayMisMatch();
     error IsPaused();
     error IsFrozen();
+    error NotFreezer();
+    error AlreadyFreezer();
 }
