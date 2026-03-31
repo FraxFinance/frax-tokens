@@ -11,10 +11,10 @@ import { EIP3009Module, SignatureModule } from "src/contracts/shared/core/module
 /// @dev v2.0.0 adds ERC-1271 and EIP-3009 support
 contract SfrxUSD2 is SfrxUSD, EIP3009Module, PermitModule {
     function version() public pure override returns (string memory) {
-        return "2.0.0";
+        return "2.0.1";
     }
 
-    constructor(address _bridge, address _remoteToken) SfrxUSD(address(1), address(1), _bridge, _remoteToken) {}
+    constructor() SfrxUSD() {}
 
     /*//////////////////////////////////////////////////////////////
                         Module Overrides

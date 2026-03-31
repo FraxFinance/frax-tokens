@@ -447,7 +447,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         _upgradeFrxUSD();
 
         vm.prank(badActor);
-        vm.expectRevert();
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
         frxusd.freeze(bob);
     }
 
@@ -466,7 +466,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         targets.push(carl);
 
         vm.prank(badActor);
-        vm.expectRevert();
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
         frxusd.freezeMany(targets);
     }
 
@@ -910,5 +910,284 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
 
     function test_case() public {
         _upgradeFrxUSD();
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>        Transfer To / Spender Frozen Tests          <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_transfer_to_frozen_reverts() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        frxusd.freeze(alice);
+
+        vm.prank(al);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.transfer(alice, 100e18);
+    }
+
+    function test_transferFrom_when_spender_frozen_reverts() public {
+        vm.prank(al);
+        frxusd.approve(bob, 100e18);
+
+        _upgradeFrxUSD();
+
+        // freeze bob (the spender / msg.sender), not al (the from)
+        vm.prank(frxusd.owner());
+        frxusd.freeze(bob);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.transferFrom(al, alice, 100e18);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>        Thaw / Unpause Restoration Tests            <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_thaw_restores_transfer() public {
+        _upgradeAndFreeze(al);
+
+        vm.prank(frxusd.owner());
+        frxusd.thaw(al);
+
+        assertEq({ left: frxusd.isFrozen(al), right: false, err: "// THEN: al should no longer be frozen" });
+
+        uint256 balBefore = frxusd.balanceOf(alice);
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+        assertEq({
+            left: frxusd.balanceOf(alice) - balBefore,
+            right: 100e18,
+            err: "// THEN: transfer should succeed after thaw"
+        });
+    }
+
+    function test_thawMany_restores_transfers() public {
+        _upgradeFrxUSD();
+
+        targets.push(al);
+        targets.push(carl);
+
+        vm.prank(frxusd.owner());
+        frxusd.freezeMany(targets);
+
+        vm.prank(frxusd.owner());
+        frxusd.thawMany(targets);
+
+        assertEq({ left: frxusd.isFrozen(al), right: false, err: "// THEN: al should no longer be frozen" });
+        assertEq({ left: frxusd.isFrozen(carl), right: false, err: "// THEN: carl should no longer be frozen" });
+
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+
+        vm.prank(carl);
+        frxusd.transfer(alice, 10e18);
+    }
+
+    function test_unpause_restores_transfer() public {
+        test_upgrade_and_pause_successful();
+
+        vm.prank(frxusd.owner());
+        frxusd.unpause();
+
+        assertEq({ left: frxusd.isPaused(), right: false, err: "// THEN: frxusd should not be paused" });
+
+        uint256 balBefore = frxusd.balanceOf(alice);
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+        assertEq({
+            left: frxusd.balanceOf(alice) - balBefore,
+            right: 100e18,
+            err: "// THEN: transfer should succeed after unpause"
+        });
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>            Partial burnMany Test                   <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_burnMany_with_specific_amounts() public {
+        _upgradeFrxUSD();
+
+        targets.push(al);
+        targets.push(bob);
+        targets.push(carl);
+
+        amounts.push(1000e18);
+        amounts.push(5e18);
+        amounts.push(69e18);
+
+        vm.prank(frxusd.owner());
+        frxusd.burnMany(targets, amounts);
+
+        assertEq({
+            left: frxusd.balanceOf(al),
+            right: 5000e18 - 1000e18,
+            err: "// THEN: al's balance not decremented correctly"
+        });
+        assertEq({
+            left: frxusd.balanceOf(bob),
+            right: 15e18 - 5e18,
+            err: "// THEN: bob's balance not decremented correctly"
+        });
+        assertEq({ left: frxusd.balanceOf(carl), right: 0, err: "// THEN: carl's balance not decremented correctly" });
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>          cancelAuthorization Tests                 <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_cancelAuthorization_blocks_transferWithAuthorization() public {
+        _upgradeFrxUSD();
+
+        (uint8 vCancel, bytes32 rCancel, bytes32 sCancel) = _signCancelAuthorization(al, eip3009Nonce);
+        FrxUSD(address(frxusd)).cancelAuthorization(al, eip3009Nonce, vCancel, rCancel, sCancel);
+
+        assertTrue(
+            FrxUSD(address(frxusd)).authorizationState(al, eip3009Nonce),
+            "// THEN: nonce should be marked used"
+        );
+
+        (uint8 v, bytes32 r, bytes32 s) = _signTransferAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("UsedOrCanceledAuthorization()")));
+        FrxUSD(address(frxusd)).transferWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>                  Minter Tests                      <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_addMinter_successful() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        assertTrue(FrxUSD(address(frxusd)).minters(carl), "// THEN: carl should be a minter");
+    }
+
+    function test_only_owner_can_addMinter() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
+        FrxUSD(address(frxusd)).addMinter(carl);
+    }
+
+    function test_removeMinter_successful() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).removeMinter(carl);
+
+        assertFalse(FrxUSD(address(frxusd)).minters(carl), "// THEN: carl should no longer be a minter");
+    }
+
+    function test_only_owner_can_removeMinter() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        vm.prank(badActor);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
+        FrxUSD(address(frxusd)).removeMinter(carl);
+    }
+
+    function test_minter_can_mint() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        uint256 supplyBefore = frxusd.totalSupply();
+
+        vm.prank(carl);
+        FrxUSD(address(frxusd)).minter_mint(alice, 1000e18);
+
+        assertEq({ left: frxusd.balanceOf(alice), right: 1000e18, err: "// THEN: alice balance not as expected" });
+        assertEq({
+            left: frxusd.totalSupply(),
+            right: supplyBefore + 1000e18,
+            err: "// THEN: total supply not as expected"
+        });
+    }
+
+    function test_non_minter_cannot_mint() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert("Only minters");
+        FrxUSD(address(frxusd)).minter_mint(alice, 1000e18);
+    }
+
+    function test_minter_can_burn_from() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        vm.prank(al);
+        frxusd.approve(carl, 500e18);
+
+        uint256 balBefore = frxusd.balanceOf(al);
+
+        vm.prank(carl);
+        FrxUSD(address(frxusd)).minter_burn_from(al, 500e18);
+
+        assertEq({
+            left: frxusd.balanceOf(al),
+            right: balBefore - 500e18,
+            err: "// THEN: al's balance not decremented correctly"
+        });
+    }
+
+    function test_non_minter_cannot_burn_from() public {
+        _upgradeFrxUSD();
+
+        vm.prank(al);
+        frxusd.approve(badActor, 500e18);
+
+        vm.prank(badActor);
+        vm.expectRevert("Only minters");
+        FrxUSD(address(frxusd)).minter_burn_from(al, 500e18);
+    }
+
+    function _signCancelAuthorization(
+        address authorizer,
+        bytes32 nonce
+    ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
+        SigUtils.CancelAuthorization memory cancelAuth = SigUtils.CancelAuthorization({
+            authorizer: authorizer,
+            nonce: nonce
+        });
+        (v, r, s) = vm.sign(alPrivateKey, sigUtils.getCancelAuthorizationTypedDataHash(cancelAuth));
     }
 }

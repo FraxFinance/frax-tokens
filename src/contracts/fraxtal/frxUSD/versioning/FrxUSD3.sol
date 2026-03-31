@@ -14,7 +14,7 @@ contract FrxUSD3 is FrxUSD2, EIP3009Module, PermitModule {
         return "3.0.0";
     }
 
-    constructor(address _bridge, address _remoteToken) FrxUSD2(address(1), address(1), _bridge, _remoteToken) {}
+    constructor() FrxUSD2() {}
 
     /*//////////////////////////////////////////////////////////////
                         Module Overrides

@@ -40,10 +40,7 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         /// @notice needed to register under coverage report
         // implV2 = FrxUSD(deployFrxUsdImplementationFraxtal());
         // implV2 = FrxUSD(0x00000000cd6f03dd0A6389C40c263838636c2C01);
-        implV2 = new FrxUSD(
-            address(0x4200000000000000000000000000000000000010),
-            address(0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29)
-        );
+        implV2 = new FrxUSD();
         deal(address(frxusd), al, 5000e18);
         deal(address(frxusd), bob, 15e18);
         deal(address(frxusd), carl, 69e18);
@@ -336,11 +333,8 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
     <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
     */
     function test_BRIDGE_static() public {
-        address bridge = frxusd.BRIDGE();
         _upgradeFrxUSD();
-        address bridgePost = frxusd.BRIDGE();
-        assertEq({ left: bridge, right: bridgePost, err: "// THEN: bridge not static across upgrades" });
-        console.log("BRIDGE: ", bridge);
+        assertEq({ left: frxusd.BRIDGE(), right: address(0), err: "// THEN: bridge not static across upgrades" });
     }
 
     function test_decimals_static() public {
@@ -351,17 +345,17 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
     }
 
     function test_l1token_static() public {
-        address l1token = frxusd.l1Token();
         _upgradeFrxUSD();
-        address l1tokenPost = frxusd.l1Token();
-        assertEq({ left: l1token, right: l1tokenPost, err: "// THEN: l1Token not static across upgrade" });
+        assertEq({ left: frxusd.l1Token(), right: address(0), err: "// THEN: l1Token not static across upgrade" });
     }
 
     function test_l2bridge_static() public {
-        address l2bridge = frxusd.l2Bridge();
         _upgradeFrxUSD();
-        address l2bridgePost = frxusd.l2Bridge();
-        assertEq({ left: l2bridge, right: l2bridgePost, err: "// THEN: l2bridge vriable not static across upgrade" });
+        assertEq({
+            left: frxusd.l2Bridge(),
+            right: address(0),
+            err: "// THEN: l2bridge variable not static across upgrade"
+        });
     }
 
     function test_name_static() public {
@@ -379,25 +373,26 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
     }
 
     function test_bridge_static() public {
-        address bridge = frxusd.bridge();
         _upgradeFrxUSD();
-        address bridgePost = frxusd.bridge();
-        assertEq({ left: bridge, right: bridgePost, err: "// THEN: bridge not static across upgrades" });
-        console.log("brdige: ", bridge);
+        assertEq({ left: frxusd.bridge(), right: address(0), err: "// THEN: bridge not static across upgrades" });
     }
 
     function test_REMOTE_TOKEN_static() public {
-        address remote = frxusd.REMOTE_TOKEN();
         _upgradeFrxUSD();
-        address remotePost = frxusd.REMOTE_TOKEN();
-        assertEq({ left: remote, right: remotePost, err: "// THEN: remote token not static across upgrade" });
+        assertEq({
+            left: frxusd.REMOTE_TOKEN(),
+            right: address(0),
+            err: "// THEN: remote token not static across upgrade"
+        });
     }
 
     function test_remote_token_static() public {
-        address remote = frxusd.remoteToken();
         _upgradeFrxUSD();
-        address remotePost = frxusd.remoteToken();
-        assertEq({ left: remote, right: remotePost, err: "// THEN: remote token not static across upgrade" });
+        assertEq({
+            left: frxusd.remoteToken(),
+            right: address(0),
+            err: "// THEN: remote token not static across upgrade"
+        });
     }
 
     function test_timelock_address_static() public {

@@ -107,109 +107,13 @@ contract ERC20ExWrappedPPOM is
 
     // ISemver
     // =======================================
-    /// @custom:semver 1.0.0
-    string public version = "1.0.0";
+    /// @custom:semver 1.1.0
+    string public version = "1.1.0";
 
     /* ========== CONSTRUCTOR ========== */
 
-    // /// @custom:semver 1.0.0
-    // /// @param _creator_address The contract creator
-    // /// @param _timelock_address The timelock
-    // /// @param _bridge Address of the L2 standard bridge
-    // /// @param _remoteToken Address of the corresponding L1 token
-    // /// @param _name ERC20 name
-    // /// @param _symbol ERC20 symbol
-    // constructor(
-    //     address _creator_address,
-    //     address _timelock_address,
-    //     address _bridge,
-    //     address _remoteToken,
-    //     string memory _name,
-    //     string memory _symbol
-    // ) EIP712StoragePad(_name) ERC20ReorderedState(_name, _symbol) OwnedV2(_creator_address) {
-    //     REMOTE_TOKEN = _remoteToken;
-    //     BRIDGE = _bridge;
-    //     timelock_address = _timelock_address;
-    // }
-
-    constructor() ERC20ReorderedState("Dummy Token", "DUMMY") OwnedV2(msg.sender) {
+    constructor() ERC20ReorderedState("Dummy Token", "DUMMY") OwnedV2(address(1)) {
         _disableInitializers();
-    }
-
-    /// @notice Initializer.
-    /// @param _timelock_address The timelock
-    /// @param _bridge Address of the L2 standard bridge
-    /// @param _remoteToken Address of the corresponding L1 token
-    /// @param _initTotalSupply The totalSupply
-    /// @param _nameIn ERC20 name
-    /// @param _symbolIn ERC20 symbol
-    /// @param _versionIn Version
-    function initialize(
-        address _creator_address,
-        address _timelock_address,
-        address _bridge,
-        address _remoteToken,
-        uint256 _initTotalSupply,
-        string memory _nameIn,
-        string memory _symbolIn,
-        string memory _versionIn
-    ) public initializer {
-        // Set version
-        version = _versionIn;
-
-        // Overwrite _totalSupply storage
-        //--------------------------------------
-        assembly {
-            sstore(9, _initTotalSupply)
-        }
-
-        // Overwrite ERC20 _name and _symbol storage
-        //--------------------------------------
-        // Make sure _nameIn and _symbolIn are below 31 bytes
-        uint256 _nameLength = bytes(_nameIn).length;
-        uint256 _symbolLength = bytes(_symbolIn).length;
-        if ((_nameLength >= 32) || (_symbolLength >= 32)) {
-            revert("Name and/or symbol must be lt 32 bytes");
-        }
-
-        // Write to the storage slots
-        // https://ethereum.stackexchange.com/questions/126269/how-to-store-and-retrieve-string-which-is-more-than-32-bytesor-could-be-less-th
-        assembly {
-            // If string length <= 31 we store a short array
-            // length storage variable layout :
-            // bytes 0 - 31 : string data
-            // byte 32 : length * 2
-            // data storage variable is UNUSED in this case
-            sstore(4, or(mload(add(_nameIn, 0x20)), mul(_nameLength, 2)))
-            sstore(5, or(mload(add(_symbolIn, 0x20)), mul(_symbolLength, 2)))
-        }
-
-        // Set EIP712 variables
-        //--------------------------------------
-        _SStrName = _nameIn.toShortStringWithFallback(_nameFallback);
-        _SStrVersion = _versionIn.toShortStringWithFallback(_versionFallback);
-        _hashedName = keccak256(bytes(_nameIn));
-        _hashedVersion = keccak256(bytes(_versionIn));
-        _cachedChainId = block.chainid;
-        _cachedDomainSeparator = _buildDomainSeparator();
-        _cachedThis = address(this);
-
-        // Set owner and timelock
-        //--------------------------------------
-        owner = _creator_address;
-        timelock_address = _timelock_address;
-
-        // Set BRIDGE and REMOTE_TOKEN
-        //--------------------------------------
-        REMOTE_TOKEN = _remoteToken;
-        BRIDGE = _bridge;
-
-        // Move existing gas tokens to the _creator_address
-        //--------------------------------------
-        (bool success, ) = _creator_address.call{ value: address(this).balance }("");
-        if (!success) {
-            revert TransferFailed();
-        }
     }
 
     /* ========== MODIFIERS ========== */
@@ -266,36 +170,21 @@ contract ERC20ExWrappedPPOM is
     /// @param _interfaceId Interface ID to check.
     /// @return Whether or not the interface is supported by this contract.
     function supportsInterface(bytes4 _interfaceId) external pure virtual returns (bool) {
-        bytes4 iface1 = type(IERC165).interfaceId;
-        // Interface corresponding to the legacy L2StandardERC20.
-        bytes4 iface2 = type(ILegacyMintableERC20).interfaceId;
-        // Interface corresponding to the updated OptimismMintableERC20 (this contract).
-        bytes4 iface3 = type(IOptimismMintableERC20).interfaceId;
-        return _interfaceId == iface1 || _interfaceId == iface2 || _interfaceId == iface3;
+        return _interfaceId == type(IERC165).interfaceId;
     }
 
     /* ========== RESTRICTED FUNCTIONS [BRIDGE] ========== */
 
     /// @notice Allows the StandardBridge on this network to mint tokens.
-    /// @param _to     Address to mint tokens to.
-    /// @param _amount Amount of tokens to mint.
-    function mint(
-        address _to,
-        uint256 _amount
-    ) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) onlyBridge {
-        _mint(_to, _amount);
-        emit Mint(_to, _amount);
+    /// @dev Deprecated in v1.1.0
+    function mint(address, uint256) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) {
+        revert Deprecated();
     }
 
     /// @notice Allows the StandardBridge on this network to burn tokens. No approval needed
-    /// @param _from   Address to burn tokens from.
-    /// @param _amount Amount of tokens to burn.
-    function burn(
-        address _from,
-        uint256 _amount
-    ) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) onlyBridge {
-        _burn(_from, _amount);
-        emit Burn(_from, _amount);
+    /// @dev Deprecated in v1.1.0
+    function burn(address, uint256) external virtual override(IOptimismMintableERC20, ILegacyMintableERC20) {
+        revert Deprecated();
     }
 
     /* ========== RESTRICTED FUNCTIONS [NON-BRIDGE MINTERS] ========== */
@@ -518,16 +407,6 @@ contract ERC20ExWrappedPPOM is
 
     /* ========== EVENTS ========== */
 
-    /// @notice Emitted whenever the bridge burns tokens from an account
-    /// @param account Address of the account tokens are being burned from
-    /// @param amount  Amount of tokens burned
-    event Burn(address indexed account, uint256 amount);
-
-    /// @notice Emitted whenever the bridge mints tokens to an account
-    /// @param account Address of the account tokens are being minted for
-    /// @param amount  Amount of tokens minted.
-    event Mint(address indexed account, uint256 amount);
-
     /// @notice Emitted when a non-bridge minter is added
     /// @param minter_address Address of the new minter
     event MinterAdded(address minter_address);
@@ -552,6 +431,6 @@ contract ERC20ExWrappedPPOM is
     /// @param amount Amount of tokens minted
     event TokenMinterMinted(address indexed from, address indexed to, uint256 amount);
 
-    /// @notice Error for when the gas token withdrawal in the initializer fails
-    error TransferFailed();
+    /// @notice Error for deprecated functions
+    error Deprecated();
 }
