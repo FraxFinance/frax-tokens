@@ -16,15 +16,11 @@ pragma solidity ^0.8.21;
 
 import { Timelock2Step } from "frax-std/access-control/v2/Timelock2Step.sol";
 import { IERC20 } from "@openzeppelin/contracts-5.3.0/token/ERC20/ERC20.sol";
-import { IFrxUSD } from "src/contracts/ethereum/frxUSD/IFrxUSD.sol";
-import { SafeCastLib } from "solmate/utils/SafeCastLib.sol";
 import { LinearRewardsErc4626_2, ERC20 } from "src/contracts/ethereum/sfrxUSD/inherited/LinearRewardsErc4626_2.sol";
 
 /// @title Staked frxUSD
 /// @notice A ERC4626-like Vault implementation with linear rewards, rewards can be capped
 contract SfrxUSD2 is LinearRewardsErc4626_2, Timelock2Step {
-    using SafeCastLib for *;
-
     /// @notice Used for initialization
     bool public _initialized;
 
@@ -35,10 +31,8 @@ contract SfrxUSD2 is LinearRewardsErc4626_2, Timelock2Step {
     /// @dev Mapping is used for faster verification
     mapping(address => bool) public minters;
 
-    uint256[47] public __gap;
-
     function version() public pure virtual returns (string memory) {
-        return "2.0.0";
+        return "2.0.1";
     }
 
     /// @param _underlying The erc20 asset deposited
@@ -52,35 +46,6 @@ contract SfrxUSD2 is LinearRewardsErc4626_2, Timelock2Step {
         address _timelockAddress
     ) LinearRewardsErc4626_2(ERC20(address(_underlying)), _name, _symbol) Timelock2Step(_timelockAddress) {
         _initialized = true;
-    }
-
-    error AlreadyInitialized();
-
-    /// @param _name The name of the vault
-    /// @param _symbol The symbol of the vault
-    /// @param _timelockAddress The address of the timelock/owner contract
-    /// @param _ppsInfo [0] Initial PricePerShare [1] PricePerShare increase per sec
-    function initialize(
-        string memory _name,
-        string memory _symbol,
-        address _timelockAddress,
-        uint256[2] memory _ppsInfo
-    ) external {
-        if (_initialized) revert AlreadyInitialized();
-        _initialized = true;
-        name = _name;
-        symbol = _symbol;
-        timelockAddress = _timelockAddress;
-
-        // Burn all the frxUSD currently in this contract
-        IFrxUSD(address(asset)).burn(asset.balanceOf(address(this)));
-
-        // Set PricePerShare info initially
-        pricePerShareStored = _ppsInfo[0];
-        pricePerShareIncPerSecond = _ppsInfo[1];
-
-        // Set lastSync to now
-        lastSync = block.timestamp;
     }
 
     /* ========== MODIFIERS ========== */

@@ -9,10 +9,8 @@ contract FrxUSD2 is ERC20PermitPermissionedNonBridgeableMintable {
     /// @notice Whether or not the contract is paused
     bool public isPaused;
 
-    /// @notice Mapping indiciating which addresses can freeze accounts
+    /// @notice Mapping indicating which addresses can freeze accounts
     mapping(address => bool) public isFreezer;
-
-    uint256[47] private __gap;
 
     /// @notice Upgrade version of the contract
     /// @dev Does not impact EIP712 version, which is automatically set to "1" in constructor
@@ -60,7 +58,7 @@ contract FrxUSD2 is ERC20PermitPermissionedNonBridgeableMintable {
     }
 
     /// @notice External admin gated function to freeze a given account
-    /// @param _owner The account to be
+    /// @param _owner The account to be frozen
     function freeze(address _owner) external {
         if (!isFreezer[msg.sender] && msg.sender != owner) revert NotFreezer();
         _freeze(_owner);
@@ -103,7 +101,7 @@ contract FrxUSD2 is ERC20PermitPermissionedNonBridgeableMintable {
     /* ========== Internals For Admin Gated ========== */
 
     /// @notice Internal helper function to freeze an account
-    /// @param _owner The account to 'frozen'
+    /// @param _owner The account to freeze
     function _freeze(address _owner) internal {
         isFrozen[_owner] = true;
         emit AccountFrozen(_owner);

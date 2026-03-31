@@ -1,18 +1,16 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import { ERC20Permit, ERC20, EIP712, Nonces } from "@openzeppelin/contracts-5.3.0/token/ERC20/extensions/ERC20Permit.sol";
+import { ERC20Permit, ERC20 } from "@openzeppelin/contracts-5.3.0/token/ERC20/extensions/ERC20Permit.sol";
 import { ERC20Burnable } from "@openzeppelin/contracts-5.3.0/token/ERC20/extensions/ERC20Burnable.sol";
-import { Ownable2Step } from "@openzeppelin/contracts-5.3.0/access/Ownable2Step.sol";
-import { Ownable } from "@openzeppelin/contracts-5.3.0/access/Ownable.sol";
-import { StorageSlot } from "@openzeppelin/contracts-5.3.0/utils/StorageSlot.sol";
+import { Ownable2Step, Ownable } from "@openzeppelin/contracts-5.3.0/access/Ownable2Step.sol";
 
-/// @title FrxUSD
+/// @title FrxUSD2
 /**
  * @notice Combines Openzeppelin's ERC20Permit, ERC20Burnable and Ownable2Step.
  *     Also includes a list of authorized minters
  */
-/// @dev FrxUSD adheres to EIP-712/EIP-2612 and can use permits
+/// @dev FrxUSD2 adheres to EIP-712/EIP-2612 and can use permits
 contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     /// @notice Array of the non-bridge minters
     address[] public minters_array;
@@ -29,7 +27,9 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
 
     mapping(address => bool) public isFreezer;
 
-    uint256[45] private __gap;
+    function version() public pure virtual returns (string memory) {
+        return "2.0.1";
+    }
 
     /* ========== CONSTRUCTOR ========== */
     /// @param _ownerAddress The initial owner
@@ -138,9 +138,10 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     }
 
     /// @notice External admin gated function to freeze a given account
-    /// @param _owner The account to be
+    /// @param _owner The account to be frozen
     function freeze(address _owner) external {
         if (!isFreezer[msg.sender] && msg.sender != owner()) revert NotFreezer();
+
         _freeze(_owner);
     }
 
@@ -212,14 +213,6 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
 
     /* ========== EVENTS ========== */
 
-    /// @notice Emitted when a freezer is added
-    /// @param freezer The address that was added as a freezer
-    event AddFreezer(address indexed freezer);
-
-    /// @notice Emitted when a freezer is removed
-    /// @param freezer The address that was removed as a freezer
-    event RemoveFreezer(address indexed freezer);
-
     /// @notice Emitted whenever the bridge burns tokens from an account
     /// @param account Address of the account tokens are being burned from
     /// @param amount  Amount of tokens burned
@@ -264,11 +257,19 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     /// @param account The account being thawed
     event AccountThawed(address account);
 
+    /// @notice Event Emitted when an address is added as a freezer
+    /// @param account The account being added as a freezer
+    event AddFreezer(address account);
+
+    /// @notice Event Emitted when an address is removed as a freezer
+    /// @param account The account being removed as a freezer
+    event RemoveFreezer(address account);
+
     /* ========== ERRORS ========== */
     error ArrayMisMatch();
     error IsPaused();
     error IsFrozen();
-    error OwnerCannotInitToZeroAddress();
     error NotFreezer();
     error AlreadyFreezer();
+    error OwnerCannotInitToZeroAddress();
 }

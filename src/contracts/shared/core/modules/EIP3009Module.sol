@@ -21,9 +21,20 @@ abstract contract EIP3009Module is SignatureModule {
     //==============================================================================
     // Storage
     //==============================================================================
-    mapping(address authorizer => mapping(bytes32 nonce => bool used)) isAuthorizationUsed;
 
-    uint256[49] private __gap;
+    struct EIP3009ModuleStorage {
+        mapping(address authorizer => mapping(bytes32 nonce => bool used)) isAuthorizationUsed;
+    }
+
+    // keccak256(abi.encode(uint256(keccak256("frax.storage.EIP3009Module")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant EIP3009ModuleStorageLocation =
+        0x6607eb842e76408d8b3956685dc6b9da5897a1d9b47edcc993ce266e603fa500;
+
+    function _getEIP3009ModuleStorage() private pure returns (EIP3009ModuleStorage storage $) {
+        assembly {
+            $.slot := EIP3009ModuleStorageLocation
+        }
+    }
 
     //==============================================================================
     // Functions
@@ -199,7 +210,7 @@ abstract contract EIP3009Module is SignatureModule {
             signature: signature
         });
 
-        isAuthorizationUsed[authorizer][nonce] = true;
+        _getEIP3009ModuleStorage().isAuthorizationUsed[authorizer][nonce] = true;
         emit AuthorizationCanceled({ authorizer: authorizer, nonce: nonce });
     }
 
@@ -211,7 +222,7 @@ abstract contract EIP3009Module is SignatureModule {
     /// @param authorizer    Authorizer's address
     /// @param nonce         Nonce of the authorization
     function _requireUnusedAuthorization(address authorizer, bytes32 nonce) private view {
-        if (isAuthorizationUsed[authorizer][nonce]) {
+        if (_getEIP3009ModuleStorage().isAuthorizationUsed[authorizer][nonce]) {
             revert UsedOrCanceledAuthorization();
         }
     }
@@ -224,7 +235,7 @@ abstract contract EIP3009Module is SignatureModule {
     /// @param authorizer    Authorizer's address
     /// @param nonce         Nonce of the authorization
     function _markAuthorizationAsUsed(address authorizer, bytes32 nonce) private {
-        isAuthorizationUsed[authorizer][nonce] = true;
+        _getEIP3009ModuleStorage().isAuthorizationUsed[authorizer][nonce] = true;
         emit AuthorizationUsed({ authorizer: authorizer, nonce: nonce });
     }
 
@@ -241,7 +252,7 @@ abstract contract EIP3009Module is SignatureModule {
      * @return True if the nonce is used
      */
     function authorizationState(address authorizer, bytes32 nonce) external view returns (bool) {
-        return isAuthorizationUsed[authorizer][nonce];
+        return _getEIP3009ModuleStorage().isAuthorizationUsed[authorizer][nonce];
     }
 
     //==============================================================================

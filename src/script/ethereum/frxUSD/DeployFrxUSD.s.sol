@@ -27,6 +27,8 @@ contract DeployFrxUSD is BaseScript {
         owner = ProxyAdmin(proxyAdmin).owner();
 
         txHelper = new SafeTxHelper();
+
+        super.setUp();
     }
 
     function run() public {
@@ -58,7 +60,7 @@ contract DeployFrxUSD is BaseScript {
 
         txs.push(SafeTx({ name: "upgrade", to: proxyAdmin, value: 0, data: upgradeData }));
         string memory root = vm.projectRoot();
-        string memory filename = string.concat(root, "/src/script/fraxtal/frxUSD/DeployFrxUSD.json");
+        string memory filename = string.concat(root, "/src/script/ethereum/frxUSD/DeployFrxUSD.json");
         txHelper.writeTxs(txs, filename);
 
         console.log("Deploy msig tx from %s", owner);

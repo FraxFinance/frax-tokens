@@ -6,13 +6,17 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { FrxUSD } from "src/contracts/ethereum/frxUSD/FrxUSD.sol";
 import { IFrxUSD } from "src/contracts/ethereum/frxUSD/IFrxUSD.sol";
 import { IProxy } from "src/test/helpers/IProxy.sol";
+import { SigUtils } from "src/test/utils/SigUtils.sol";
+import { EIP3009Module } from "src/contracts/shared/core/modules/EIP3009Module.sol";
 import "src/Constants.sol" as Constants;
 
 contract FrxUSD_Mainnet_Compliance is FraxTest {
     IFrxUSD public constant frxusd = IFrxUSD(0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29);
     IFrxUSD public implV2;
+    SigUtils public sigUtils;
 
-    address al = address(0xa1);
+    uint256 alPrivateKey = 0x42;
+    address al;
     address bob = address(0xb0b);
     address carl = address(0xca71);
     address alice = address(0xa11ce);
@@ -23,8 +27,15 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
 
     bytes32[] frxusdStorageLayoutInitial;
 
+    // EIP-3009 test parameters
+    bytes32 eip3009Nonce = bytes32(abi.encode(1));
+    uint256 validAfter;
+    uint256 validBefore;
+
     function setUp() public virtual {
         vm.createSelectFork(vm.envString("MAINNET_URL"));
+
+        al = vm.addr(alPrivateKey);
 
         /// @notice needed to register under coverage report
         // implV2 = IFrxUSD(deployFrxUsdImplementationEth());
@@ -35,6 +46,12 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         deal(address(frxusd), al, 5000e18);
         deal(address(frxusd), bob, 15e18);
         deal(address(frxusd), carl, 69e18);
+
+        // Ensure al is an EOA for signature tests
+        vm.etch(al, hex"");
+
+        validAfter = block.timestamp - 1;
+        validBefore = block.timestamp + 1 days;
     }
 
     function test_assert_balances_remain_constant() public {
@@ -426,7 +443,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         frxusd.unpause();
     }
 
-    function test_only_freezer_can_freeze() public {
+    function test_only_owner_can_freeze() public {
         _upgradeFrxUSD();
 
         vm.prank(badActor);
@@ -442,7 +459,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         frxusd.thaw(al);
     }
 
-    function test_only_freezer_can_freezeMany() public {
+    function test_only_owner_can_freezeMany() public {
         _upgradeFrxUSD();
 
         targets.push(bob);
@@ -485,6 +502,348 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
 
     /*
     <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       EIP-3009 Compliance w/ Freeze & Pause          <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_transferWithAuthorization_when_from_frozen_reverts() public {
+        _upgradeAndFreeze(al);
+
+        (uint8 v, bytes32 r, bytes32 s) = _signTransferAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        FrxUSD(address(frxusd)).transferWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    function test_transferWithAuthorization_when_to_frozen_reverts() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        frxusd.freeze(bob);
+
+        (uint8 v, bytes32 r, bytes32 s) = _signTransferAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        FrxUSD(address(frxusd)).transferWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    function test_transferWithAuthorization_when_paused_reverts() public {
+        test_upgrade_and_pause_successful();
+
+        (uint8 v, bytes32 r, bytes32 s) = _signTransferAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        FrxUSD(address(frxusd)).transferWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    function test_receiveWithAuthorization_when_from_frozen_reverts() public {
+        _upgradeAndFreeze(al);
+
+        (uint8 v, bytes32 r, bytes32 s) = _signReceiveAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        FrxUSD(address(frxusd)).receiveWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    function test_receiveWithAuthorization_when_to_frozen_reverts() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        frxusd.freeze(bob);
+
+        (uint8 v, bytes32 r, bytes32 s) = _signReceiveAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        FrxUSD(address(frxusd)).receiveWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    function test_receiveWithAuthorization_when_paused_reverts() public {
+        test_upgrade_and_pause_successful();
+
+        (uint8 v, bytes32 r, bytes32 s) = _signReceiveAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        FrxUSD(address(frxusd)).receiveWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    function test_permit_succeeds_but_transferFrom_reverts_when_frozen() public {
+        _upgradeAndFreeze(al);
+
+        uint256 deadline = block.timestamp + 1 days;
+        SigUtils.Permit memory _permit = SigUtils.Permit({
+            owner: al,
+            spender: bob,
+            value: 1e18,
+            nonce: FrxUSD(address(frxusd)).nonces(al),
+            deadline: deadline
+        });
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(alPrivateKey, sigUtils.getPermitTypedDataHash(_permit));
+
+        // permit succeeds — approval is not gated by freeze
+        vm.prank(bob);
+        frxusd.permit({ owner: al, spender: bob, value: 1e18, deadline: deadline, v: v, r: r, s: s });
+
+        assertEq({
+            left: frxusd.allowance(al, bob),
+            right: 1e18,
+            err: "// THEN: permit should set allowance even when frozen"
+        });
+
+        // but transferFrom using that allowance reverts
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.transferFrom(al, alice, 1e18);
+    }
+
+    function test_permit_succeeds_but_transferFrom_reverts_when_paused() public {
+        test_upgrade_and_pause_successful();
+
+        uint256 deadline = block.timestamp + 1 days;
+        SigUtils.Permit memory _permit = SigUtils.Permit({
+            owner: al,
+            spender: bob,
+            value: 1e18,
+            nonce: FrxUSD(address(frxusd)).nonces(al),
+            deadline: deadline
+        });
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(alPrivateKey, sigUtils.getPermitTypedDataHash(_permit));
+
+        // permit succeeds — approval is not gated by pause
+        vm.prank(bob);
+        frxusd.permit({ owner: al, spender: bob, value: 1e18, deadline: deadline, v: v, r: r, s: s });
+
+        assertEq({
+            left: frxusd.allowance(al, bob),
+            right: 1e18,
+            err: "// THEN: permit should set allowance even when paused"
+        });
+
+        // but transferFrom using that allowance reverts
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        frxusd.transferFrom(al, alice, 1e18);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>          Freezer Role Delegation Tests               <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_addFreezer_successful() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        assertTrue(FrxUSD(address(frxusd)).isFreezer(carl), "// THEN: carl should be a freezer");
+    }
+
+    function test_addFreezer_reverts_if_already_freezer() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        vm.prank(frxusd.owner());
+        vm.expectRevert(bytes4(keccak256("AlreadyFreezer()")));
+        FrxUSD(address(frxusd)).addFreezer(carl);
+    }
+
+    function test_only_owner_can_addFreezer() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
+        FrxUSD(address(frxusd)).addFreezer(carl);
+    }
+
+    function test_removeFreezer_successful() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).removeFreezer(carl);
+
+        assertFalse(FrxUSD(address(frxusd)).isFreezer(carl), "// THEN: carl should no longer be a freezer");
+    }
+
+    function test_removeFreezer_reverts_if_not_freezer() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
+        FrxUSD(address(frxusd)).removeFreezer(carl);
+    }
+
+    function test_only_owner_can_removeFreezer() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
+        FrxUSD(address(frxusd)).removeFreezer(carl);
+    }
+
+    function test_freezer_can_freeze() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        vm.prank(carl);
+        frxusd.freeze(al);
+
+        assertTrue(frxusd.isFrozen(al), "// THEN: al should be frozen by freezer");
+    }
+
+    function test_freezer_can_freezeMany() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        targets.push(al);
+        targets.push(bob);
+
+        vm.prank(carl);
+        frxusd.freezeMany(targets);
+
+        assertTrue(frxusd.isFrozen(al), "// THEN: al should be frozen");
+        assertTrue(frxusd.isFrozen(bob), "// THEN: bob should be frozen");
+    }
+
+    function test_non_freezer_cannot_freeze() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
+        frxusd.freeze(al);
+    }
+
+    function test_non_freezer_cannot_freezeMany() public {
+        _upgradeFrxUSD();
+
+        targets.push(al);
+
+        vm.prank(badActor);
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
+        frxusd.freezeMany(targets);
+    }
+
+    function test_removed_freezer_cannot_freeze() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).removeFreezer(carl);
+
+        vm.prank(carl);
+        vm.expectRevert(bytes4(keccak256("NotFreezer()")));
+        frxusd.freeze(al);
+    }
+
+    function test_freezer_cannot_thaw() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        vm.prank(carl);
+        frxusd.freeze(al);
+
+        vm.prank(carl);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", carl));
+        frxusd.thaw(al);
+    }
+
+    function test_freezer_cannot_thawMany() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addFreezer(carl);
+
+        targets.push(al);
+
+        vm.prank(carl);
+        frxusd.freezeMany(targets);
+
+        vm.prank(carl);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", carl));
+        frxusd.thawMany(targets);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
     <*>            Helper functions to move state            <*>
     <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
     */
@@ -496,6 +855,38 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         frxusd.freeze(al);
 
         assertEq({ left: frxusd.isFrozen(toFreeze), right: true, err: "// THEN: users account is not frozen" });
+    }
+
+    function _signTransferAuthorization(
+        address from,
+        address to,
+        uint256 value
+    ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
+        SigUtils.Authorization memory authorization = SigUtils.Authorization({
+            from: from,
+            to: to,
+            value: value,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce
+        });
+        (v, r, s) = vm.sign(alPrivateKey, sigUtils.getTransferWithAuthorizationTypedDataHash(authorization));
+    }
+
+    function _signReceiveAuthorization(
+        address from,
+        address to,
+        uint256 value
+    ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
+        SigUtils.Authorization memory authorization = SigUtils.Authorization({
+            from: from,
+            to: to,
+            value: value,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce
+        });
+        (v, r, s) = vm.sign(alPrivateKey, sigUtils.getReceiveWithAuthorizationTypedDataHash(authorization));
     }
 
     function _upgradeFrxUSD() internal {
@@ -513,9 +904,290 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         );
         console.log("THe new implementation is: ", impl_post);
         assertEq({ left: address(implV2), right: impl_post });
+
+        sigUtils = new SigUtils(frxusd.DOMAIN_SEPARATOR());
     }
 
     function test_case() public {
         _upgradeFrxUSD();
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>        Transfer To / Spender Frozen Tests          <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_transfer_to_frozen_reverts() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        frxusd.freeze(alice);
+
+        vm.prank(al);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.transfer(alice, 100e18);
+    }
+
+    function test_transferFrom_when_spender_frozen_reverts() public {
+        vm.prank(al);
+        frxusd.approve(bob, 100e18);
+
+        _upgradeFrxUSD();
+
+        // freeze bob (the spender / msg.sender), not al (the from)
+        vm.prank(frxusd.owner());
+        frxusd.freeze(bob);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.transferFrom(al, alice, 100e18);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>        Thaw / Unpause Restoration Tests            <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_thaw_restores_transfer() public {
+        _upgradeAndFreeze(al);
+
+        vm.prank(frxusd.owner());
+        frxusd.thaw(al);
+
+        assertEq({ left: frxusd.isFrozen(al), right: false, err: "// THEN: al should no longer be frozen" });
+
+        uint256 balBefore = frxusd.balanceOf(alice);
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+        assertEq({
+            left: frxusd.balanceOf(alice) - balBefore,
+            right: 100e18,
+            err: "// THEN: transfer should succeed after thaw"
+        });
+    }
+
+    function test_thawMany_restores_transfers() public {
+        _upgradeFrxUSD();
+
+        targets.push(al);
+        targets.push(carl);
+
+        vm.prank(frxusd.owner());
+        frxusd.freezeMany(targets);
+
+        vm.prank(frxusd.owner());
+        frxusd.thawMany(targets);
+
+        assertEq({ left: frxusd.isFrozen(al), right: false, err: "// THEN: al should no longer be frozen" });
+        assertEq({ left: frxusd.isFrozen(carl), right: false, err: "// THEN: carl should no longer be frozen" });
+
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+
+        vm.prank(carl);
+        frxusd.transfer(alice, 10e18);
+    }
+
+    function test_unpause_restores_transfer() public {
+        test_upgrade_and_pause_successful();
+
+        vm.prank(frxusd.owner());
+        frxusd.unpause();
+
+        assertEq({ left: frxusd.isPaused(), right: false, err: "// THEN: frxusd should not be paused" });
+
+        uint256 balBefore = frxusd.balanceOf(alice);
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+        assertEq({
+            left: frxusd.balanceOf(alice) - balBefore,
+            right: 100e18,
+            err: "// THEN: transfer should succeed after unpause"
+        });
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>            Partial burnMany Test                   <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_burnMany_with_specific_amounts() public {
+        _upgradeFrxUSD();
+
+        targets.push(al);
+        targets.push(bob);
+        targets.push(carl);
+
+        amounts.push(1000e18);
+        amounts.push(5e18);
+        amounts.push(69e18);
+
+        vm.prank(frxusd.owner());
+        frxusd.burnMany(targets, amounts);
+
+        assertEq({
+            left: frxusd.balanceOf(al),
+            right: 5000e18 - 1000e18,
+            err: "// THEN: al's balance not decremented correctly"
+        });
+        assertEq({
+            left: frxusd.balanceOf(bob),
+            right: 15e18 - 5e18,
+            err: "// THEN: bob's balance not decremented correctly"
+        });
+        assertEq({ left: frxusd.balanceOf(carl), right: 0, err: "// THEN: carl's balance not decremented correctly" });
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>          cancelAuthorization Tests                 <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_cancelAuthorization_blocks_transferWithAuthorization() public {
+        _upgradeFrxUSD();
+
+        (uint8 vCancel, bytes32 rCancel, bytes32 sCancel) = _signCancelAuthorization(al, eip3009Nonce);
+        FrxUSD(address(frxusd)).cancelAuthorization(al, eip3009Nonce, vCancel, rCancel, sCancel);
+
+        assertTrue(
+            FrxUSD(address(frxusd)).authorizationState(al, eip3009Nonce),
+            "// THEN: nonce should be marked used"
+        );
+
+        (uint8 v, bytes32 r, bytes32 s) = _signTransferAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("UsedOrCanceledAuthorization()")));
+        FrxUSD(address(frxusd)).transferWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>                  Minter Tests                      <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_addMinter_successful() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        assertTrue(FrxUSD(address(frxusd)).minters(carl), "// THEN: carl should be a minter");
+    }
+
+    function test_only_owner_can_addMinter() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
+        FrxUSD(address(frxusd)).addMinter(carl);
+    }
+
+    function test_removeMinter_successful() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).removeMinter(carl);
+
+        assertFalse(FrxUSD(address(frxusd)).minters(carl), "// THEN: carl should no longer be a minter");
+    }
+
+    function test_only_owner_can_removeMinter() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        vm.prank(badActor);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
+        FrxUSD(address(frxusd)).removeMinter(carl);
+    }
+
+    function test_minter_can_mint() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        uint256 supplyBefore = frxusd.totalSupply();
+
+        vm.prank(carl);
+        FrxUSD(address(frxusd)).minter_mint(alice, 1000e18);
+
+        assertEq({ left: frxusd.balanceOf(alice), right: 1000e18, err: "// THEN: alice balance not as expected" });
+        assertEq({
+            left: frxusd.totalSupply(),
+            right: supplyBefore + 1000e18,
+            err: "// THEN: total supply not as expected"
+        });
+    }
+
+    function test_non_minter_cannot_mint() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert("Only minters");
+        FrxUSD(address(frxusd)).minter_mint(alice, 1000e18);
+    }
+
+    function test_minter_can_burn_from() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).addMinter(carl);
+
+        vm.prank(al);
+        frxusd.approve(carl, 500e18);
+
+        uint256 balBefore = frxusd.balanceOf(al);
+
+        vm.prank(carl);
+        FrxUSD(address(frxusd)).minter_burn_from(al, 500e18);
+
+        assertEq({
+            left: frxusd.balanceOf(al),
+            right: balBefore - 500e18,
+            err: "// THEN: al's balance not decremented correctly"
+        });
+    }
+
+    function test_non_minter_cannot_burn_from() public {
+        _upgradeFrxUSD();
+
+        vm.prank(al);
+        frxusd.approve(badActor, 500e18);
+
+        vm.prank(badActor);
+        vm.expectRevert("Only minters");
+        FrxUSD(address(frxusd)).minter_burn_from(al, 500e18);
+    }
+
+    function _signCancelAuthorization(
+        address authorizer,
+        bytes32 nonce
+    ) internal view returns (uint8 v, bytes32 r, bytes32 s) {
+        SigUtils.CancelAuthorization memory cancelAuth = SigUtils.CancelAuthorization({
+            authorizer: authorizer,
+            nonce: nonce
+        });
+        (v, r, s) = vm.sign(alPrivateKey, sigUtils.getCancelAuthorizationTypedDataHash(cancelAuth));
     }
 }

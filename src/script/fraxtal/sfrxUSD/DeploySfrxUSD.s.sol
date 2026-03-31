@@ -27,6 +27,8 @@ contract DeploySfrxUSD is BaseScript {
         owner = ProxyAdmin(proxyAdmin).owner();
 
         txHelper = new SafeTxHelper();
+
+        super.setUp();
     }
 
     function run() public {
