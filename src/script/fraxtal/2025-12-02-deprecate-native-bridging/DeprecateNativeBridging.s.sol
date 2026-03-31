@@ -22,7 +22,7 @@ address constant FRXBTC_PROXY = 0xfC00000000000000000000000000000000000007;
 address constant FRXETH_PROXY = 0xFC00000000000000000000000000000000000006;
 address constant SFRXETH_PROXY = 0xFC00000000000000000000000000000000000005;
 
-// forge script src/script/fraxtal/2025-12-02-deprecate-native-bridging/DeprecateNativeBridging.s.sol --rpc-url https://rpc.frax.com TODO: verify
+// forge script src/script/fraxtal/2025-12-02-deprecate-native-bridging/DeprecateNativeBridging.s.sol --rpc-url https://rpc.frax.com --broadcast --gcp --verify --verifier etherscan --etherscan-api-key $ETHERSCAN_API_KEY --sender 0x54f9b12743a7deec0ea48721683cbebedc6e17bc
 contract DeprecateNativeBridging is BaseScript {
     address public proxyAdmin;
     address public owner;
@@ -59,7 +59,7 @@ contract DeprecateNativeBridging is BaseScript {
     }
 
     function deployAndUpgradeFrxUsd() public {
-        vm.startBroadcast(deployer);
+        vm.startBroadcast();
         implementation = address(new FrxUSD());
         require(implementation != address(0), "Failed implementation");
         vm.stopBroadcast();
@@ -68,7 +68,7 @@ contract DeprecateNativeBridging is BaseScript {
     }
 
     function deployAndUpgradeSfrxUsd() public {
-        vm.startBroadcast(deployer);
+        vm.startBroadcast();
         implementation = address(new SfrxUSD());
         require(implementation != address(0), "Failed implementation");
         vm.stopBroadcast();
@@ -77,7 +77,7 @@ contract DeprecateNativeBridging is BaseScript {
     }
 
     function deployAndUpgradeFpi() public {
-        vm.startBroadcast(deployer);
+        vm.startBroadcast();
         implementation = address(new FPI());
         require(implementation != address(0), "Failed implementation");
         vm.stopBroadcast();
@@ -86,7 +86,7 @@ contract DeprecateNativeBridging is BaseScript {
     }
 
     function deployAndUpgradeFrxBtc() public {
-        vm.startBroadcast(deployer);
+        vm.startBroadcast();
         implementation = address(new FrxBTC());
         require(implementation != address(0), "Failed implementation");
         vm.stopBroadcast();
@@ -95,7 +95,7 @@ contract DeprecateNativeBridging is BaseScript {
     }
 
     function deployAndUpgradeFrxEth() public {
-        vm.startBroadcast(deployer);
+        vm.startBroadcast();
         implementation = address(new FrxETH());
         require(implementation != address(0), "Failed implementation");
         vm.stopBroadcast();
@@ -104,7 +104,7 @@ contract DeprecateNativeBridging is BaseScript {
     }
 
     function deployAndUpgradeSfrxEth() public {
-        vm.startBroadcast(deployer);
+        vm.startBroadcast();
         implementation = address(new SfrxETH());
         require(implementation != address(0), "Failed implementation");
         vm.stopBroadcast();
