@@ -1477,7 +1477,8 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         console.log("The proxy Admin: ", address(proxyAdmin));
         console.log(address(frxusd), address(implV2));
         IProxy(address(proxyAdmin)).upgrade(address(frxusd), address(implV2));
-
+        console.log("frxusd proxy: ", address(frxusd));
+        console.log("implV2: ", address(implV2));
         address impl_post = address(
             uint160(uint256(vm.load(address(frxusd), bytes32(uint256(keccak256("eip1967.proxy.implementation")) - 1))))
         );

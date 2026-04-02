@@ -916,7 +916,8 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         console.log("The proxy Admin: ", address(proxyAdmin));
         vm.prank(proxyAdmin.owner());
         IProxy(address(proxyAdmin)).upgradeAndCall(address(frxusd), address(implV2), hex"");
-
+        console.log("frxUSD Proxy Address: ", address(frxusd));
+        console.log("Implementation Address: ", address(implV2));
         address impl_post = address(
             uint160(uint256(vm.load(address(frxusd), bytes32(uint256(keccak256("eip1967.proxy.implementation")) - 1))))
         );
