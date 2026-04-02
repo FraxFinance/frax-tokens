@@ -116,6 +116,53 @@ contract ERC20ExWrappedPPOM is
         _disableInitializers();
     }
 
+    function initialize(
+        address _creator_address,
+        address _timelock_address,
+        string memory _nameIn,
+        string memory _symbolIn,
+        string memory _versionIn
+    ) public initializer {
+        // Set version
+        version = _versionIn;
+
+        // Overwrite ERC20 _name and _symbol storage
+        //--------------------------------------
+        // Make sure _nameIn and _symbolIn are below 31 bytes
+        uint256 _nameLength = bytes(_nameIn).length;
+        uint256 _symbolLength = bytes(_symbolIn).length;
+        if ((_nameLength >= 32) || (_symbolLength >= 32)) {
+            revert("Name and/or symbol must be lt 32 bytes");
+        }
+
+        // Write to the storage slots
+        // https://ethereum.stackexchange.com/questions/126269/how-to-store-and-retrieve-string-which-is-more-than-32-bytesor-could-be-less-th
+        assembly {
+            // If string length <= 31 we store a short array
+            // length storage variable layout :
+            // bytes 0 - 31 : string data
+            // byte 32 : length * 2
+            // data storage variable is UNUSED in this case
+            sstore(4, or(mload(add(_nameIn, 0x20)), mul(_nameLength, 2)))
+            sstore(5, or(mload(add(_symbolIn, 0x20)), mul(_symbolLength, 2)))
+        }
+
+        // Set EIP712 variables
+        //--------------------------------------
+        _SStrName = _nameIn.toShortStringWithFallback(_nameFallback);
+        _SStrVersion = _versionIn.toShortStringWithFallback(_versionFallback);
+        _hashedName = keccak256(bytes(_nameIn));
+        _hashedVersion = keccak256(bytes(_versionIn));
+        _cachedChainId = block.chainid;
+        _cachedDomainSeparator = _buildDomainSeparator();
+        _cachedThis = address(this);
+
+        // Set owner and timelock
+        //--------------------------------------
+        owner = _creator_address;
+        timelock_address = _timelock_address;
+    }
+
     /* ========== MODIFIERS ========== */
 
     /// @notice A modifier that only allows the contract owner or the timelock to call

@@ -1,0 +1,4 @@
+packages:
+  - "."
+onlyBuiltDependencies:
+  - "frax-standard-solidity"
