@@ -39,11 +39,11 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
 
         /// @notice needed to register under coverage report
         // implV2 = FrxUSD(deployFrxUsdImplementationFraxtal());
-        // implV2 = FrxUSD(0x00000000cd6f03dd0A6389C40c263838636c2C01);
-        implV2 = new FrxUSD(
-            address(0x4200000000000000000000000000000000000010),
-            address(0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29)
-        );
+        implV2 = FrxUSD(0x0000000083BDf23788585D499EAb0D92A8bEfB1D);
+        // implV2 = new FrxUSD(
+        //     address(0x4200000000000000000000000000000000000010),
+        //     address(0xCAcd6fd266aF91b8AeD52aCCc382b4e165586E29)
+        // );
         deal(address(frxusd), al, 5000e18);
         deal(address(frxusd), bob, 15e18);
         deal(address(frxusd), carl, 69e18);
@@ -476,6 +476,25 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         _upgradeFrxUSD();
         uint256 post = frxusd.totalSupply();
         assertEq({ left: pre, right: post, err: "// THEN: total supply changed" });
+    }
+
+    function test_nominated_owner_static() public {
+        address nOwnerPre = frxusd.nominatedOwner();
+        console.log("Nominated Owner Pre: ", nOwnerPre);
+        _upgradeFrxUSD();
+        address nOwnerPost = frxusd.nominatedOwner();
+        console.log("Nominated Owner Post: ", nOwnerPost);
+        assertEq(nOwnerPost, nOwnerPre, "// THEN: nominated owner change");
+    }
+
+    function test_version_static() public {
+        string memory versionPre = frxusd.version();
+        console.log("Version Pre: ", versionPre);
+        _upgradeFrxUSD();
+        string memory versionPost = frxusd.version();
+        console.log("Version Post: ", versionPost);
+
+        assertEq(versionPre, versionPost, "// THEN: version not change");
     }
 
     /*

@@ -40,8 +40,9 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         /// @notice needed to register under coverage report
         // implV2 = IFrxUSD(deployFrxUsdImplementationEth());
         // implV2 = IFrxUSD(address(new FrxUSD(address(Constants.Mainnet.COMPTROLLER_MULTISIG), "Frax USD", "frxUSD")));
-        implV2 = IFrxUSD(address(new FrxUSD()));
-        // implV2 = FrxUSD(0x000000003C7F01B12c2D2097Cf7b95358E7E5812);
+
+        // implV2 = IFrxUSD(address(new FrxUSD()));
+        implV2 = IFrxUSD(0x0000000048D2c8baf31742f6765383278BAda4d5);
 
         deal(address(frxusd), al, 5000e18);
         deal(address(frxusd), bob, 15e18);
@@ -404,6 +405,25 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         _upgradeFrxUSD();
         uint256 post = frxusd.totalSupply();
         assertEq({ left: pre, right: post, err: "// THEN: total supply changed" });
+    }
+
+    function test_pendingOwner_static() public {
+        address pendingPre = frxusd.pendingOwner();
+        console.log("Pending Owner Pre: ", pendingPre);
+        _upgradeFrxUSD();
+        address pendingPost = frxusd.pendingOwner();
+        console.log("Pending Owner Post: ", pendingPost);
+        assertEq(pendingPost, pendingPre, "// THEN: Pending owner changed during upgrade");
+    }
+
+    function test_version_change() public {
+        string memory versionPre = frxusd.version();
+        console.log("Version Pre: ", versionPre);
+        assertEq("2.0.1", versionPre);
+        _upgradeFrxUSD();
+        string memory versionPost = frxusd.version();
+        console.log("Version Post: ", versionPost);
+        assertEq("3.0.0", versionPost);
     }
 
     /*
