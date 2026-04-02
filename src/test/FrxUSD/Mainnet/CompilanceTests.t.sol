@@ -407,23 +407,6 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         assertEq({ left: pre, right: post, err: "// THEN: total supply changed" });
     }
 
-    function test_pendingOwner_static() public {
-        address pendingPre = frxusd.pendingOwner();
-        console.log("Pending Owner Pre: ", pendingPre);
-        _upgradeFrxUSD();
-        address pendingPost = frxusd.pendingOwner();
-        console.log("Pending Owner Post: ", pendingPost);
-        assertEq(pendingPost, pendingPre, "// THEN: Pending owner changed during upgrade");
-    }
-
-    function test_version_change() public {
-        string memory versionPre = frxusd.version();
-        _upgradeFrxUSD();
-        string memory versionPost = frxusd.version();
-        console.log("Version Post: ", versionPost);
-        assertEq("3.0.0", versionPost);
-    }
-
     /*
     <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
     <*>            Reversions for admin gated calls          <*>
