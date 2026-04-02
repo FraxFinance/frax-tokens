@@ -8,6 +8,9 @@ import { IFrxUSD } from "src/contracts/fraxtal/frxUSD/IFrxUSD.sol";
 import { IProxy } from "src/test/helpers/IProxy.sol";
 import { SigUtils } from "src/test/utils/SigUtils.sol";
 import { EIP3009Module } from "src/contracts/shared/core/modules/EIP3009Module.sol";
+import { IERC165 } from "@openzeppelin/contracts-5.2.0/utils/introspection/IERC165.sol";
+import { IOptimismMintableERC20 } from "src/contracts/fraxtal/shared/interfaces/IOptimismMintableERC20.sol";
+import { ILegacyMintableERC20 } from "src/contracts/fraxtal/shared/interfaces/ILegacyMintableERC20.sol";
 import "src/Constants.sol" as Constants;
 
 contract FrxUSD_Fraxtal_Compliance is FraxTest {
@@ -931,6 +934,490 @@ contract FrxUSD_Fraxtal_Compliance is FraxTest {
         vm.prank(carl);
         vm.expectRevert(bytes4(keccak256("OnlyOwner()")));
         frxusd.thawMany(targets);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       Bridge Mint/Burn + Pause/Freeze Interaction    <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_bridge_mint_succeeds() public {
+        _upgradeFrxUSD();
+
+        uint256 balBefore = frxusd.balanceOf(alice);
+        vm.prank(frxusd.BRIDGE());
+        frxusd.mint(alice, 100e18);
+
+        assertEq(frxusd.balanceOf(alice), balBefore + 100e18, "// THEN: bridge mint failed");
+    }
+
+    function test_bridge_burn_succeeds() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.BRIDGE());
+        frxusd.burn(al, 50e18);
+
+        assertEq(frxusd.balanceOf(al), 5000e18 - 50e18, "// THEN: bridge burn failed");
+    }
+
+    function test_bridge_mint_when_paused_reverts() public {
+        test_upgrade_and_pause_successful();
+
+        vm.prank(frxusd.BRIDGE());
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        frxusd.mint(alice, 100e18);
+    }
+
+    function test_bridge_burn_when_paused_reverts() public {
+        test_upgrade_and_pause_successful();
+
+        vm.prank(frxusd.BRIDGE());
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        frxusd.burn(al, 50e18);
+    }
+
+    function test_bridge_mint_to_frozen_address_reverts() public {
+        _upgradeAndFreeze(al);
+
+        vm.prank(frxusd.BRIDGE());
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.mint(al, 100e18);
+    }
+
+    function test_bridge_burn_from_frozen_address_reverts() public {
+        _upgradeAndFreeze(al);
+
+        vm.prank(frxusd.BRIDGE());
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.burn(al, 50e18);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>    ERC20Burnable burn/burnFrom + Pause/Freeze        <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_erc20_burn_succeeds() public {
+        _upgradeFrxUSD();
+
+        vm.prank(al);
+        frxusd.burn(100e18);
+
+        assertEq(frxusd.balanceOf(al), 5000e18 - 100e18, "// THEN: burn failed");
+    }
+
+    function test_erc20_burnFrom_succeeds() public {
+        _upgradeFrxUSD();
+
+        vm.prank(al);
+        frxusd.approve(bob, 100e18);
+
+        vm.prank(bob);
+        frxusd.burnFrom(al, 100e18);
+
+        assertEq(frxusd.balanceOf(al), 5000e18 - 100e18, "// THEN: burnFrom failed");
+    }
+
+    function test_erc20_burn_when_paused_reverts() public {
+        test_upgrade_and_pause_successful();
+
+        vm.prank(al);
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        frxusd.burn(100e18);
+    }
+
+    function test_erc20_burnFrom_when_paused_reverts() public {
+        vm.prank(al);
+        frxusd.approve(bob, 100e18);
+
+        test_upgrade_and_pause_successful();
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        frxusd.burnFrom(al, 100e18);
+    }
+
+    function test_erc20_burn_when_frozen_reverts() public {
+        _upgradeAndFreeze(al);
+
+        vm.prank(al);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.burn(100e18);
+    }
+
+    function test_erc20_burnFrom_when_from_frozen_reverts() public {
+        vm.prank(al);
+        frxusd.approve(bob, 100e18);
+
+        _upgradeAndFreeze(al);
+
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.burnFrom(al, 100e18);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       Minter Functions + Pause/Freeze Interaction    <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_minter_mint_succeeds() public {
+        _upgradeFrxUSD();
+
+        address minter = address(0xAAAA);
+        vm.prank(frxusd.owner());
+        frxusd.addMinter(minter);
+
+        vm.prank(minter);
+        frxusd.minter_mint(alice, 100e18);
+
+        assertEq(frxusd.balanceOf(alice), 100e18, "// THEN: minter mint failed");
+    }
+
+    function test_minter_burn_from_succeeds() public {
+        _upgradeFrxUSD();
+
+        address minter = address(0xAAAA);
+        vm.prank(frxusd.owner());
+        frxusd.addMinter(minter);
+
+        vm.prank(al);
+        frxusd.approve(minter, 100e18);
+
+        vm.prank(minter);
+        frxusd.minter_burn_from(al, 100e18);
+
+        assertEq(frxusd.balanceOf(al), 5000e18 - 100e18, "// THEN: minter burn failed");
+    }
+
+    function test_minter_mint_when_paused_reverts() public {
+        _upgradeFrxUSD();
+
+        address minter = address(0xAAAA);
+        vm.prank(frxusd.owner());
+        frxusd.addMinter(minter);
+
+        vm.prank(frxusd.owner());
+        frxusd.pause();
+
+        vm.prank(minter);
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        frxusd.minter_mint(alice, 100e18);
+    }
+
+    function test_minter_burn_from_when_paused_reverts() public {
+        _upgradeFrxUSD();
+
+        address minter = address(0xAAAA);
+        vm.prank(frxusd.owner());
+        frxusd.addMinter(minter);
+
+        vm.prank(al);
+        frxusd.approve(minter, 100e18);
+
+        vm.prank(frxusd.owner());
+        frxusd.pause();
+
+        vm.prank(minter);
+        vm.expectRevert(bytes4(keccak256("IsPaused()")));
+        frxusd.minter_burn_from(al, 100e18);
+    }
+
+    function test_minter_mint_to_frozen_address_reverts() public {
+        _upgradeAndFreeze(al);
+
+        address minter = address(0xAAAA);
+        vm.prank(frxusd.owner());
+        frxusd.addMinter(minter);
+
+        vm.prank(minter);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.minter_mint(al, 100e18);
+    }
+
+    function test_minter_burn_from_frozen_address_reverts() public {
+        _upgradeFrxUSD();
+
+        address minter = address(0xAAAA);
+        vm.prank(frxusd.owner());
+        frxusd.addMinter(minter);
+
+        vm.prank(al);
+        frxusd.approve(minter, 100e18);
+
+        vm.prank(frxusd.owner());
+        frxusd.freeze(al);
+
+        vm.prank(minter);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.minter_burn_from(al, 100e18);
+    }
+
+    function test_addMinter_and_removeMinter() public {
+        _upgradeFrxUSD();
+
+        address minter = address(0xAAAA);
+        vm.prank(frxusd.owner());
+        frxusd.addMinter(minter);
+        assertTrue(frxusd.minters(minter), "// THEN: minter not added");
+
+        vm.prank(frxusd.owner());
+        frxusd.removeMinter(minter);
+        assertFalse(frxusd.minters(minter), "// THEN: minter not removed");
+    }
+
+    function test_minters_static_across_upgrade() public {
+        // Snapshot all minters_array entries before upgrade
+        address[] memory mintersPre = new address[](10);
+        uint256 minterCount;
+        for (uint256 i; i < 10; i++) {
+            try frxusd.minters_array(i) returns (address m) {
+                mintersPre[i] = m;
+                minterCount = i + 1;
+            } catch {
+                break;
+            }
+        }
+
+        // Snapshot minters mapping for each entry
+        bool[] memory mintersMapPre = new bool[](minterCount);
+        for (uint256 i; i < minterCount; i++) {
+            if (mintersPre[i] != address(0)) {
+                mintersMapPre[i] = frxusd.minters(mintersPre[i]);
+            }
+        }
+
+        _upgradeFrxUSD();
+
+        // Assert minters_array entries unchanged
+        for (uint256 i; i < minterCount; i++) {
+            assertEq(frxusd.minters_array(i), mintersPre[i], "// THEN: minters_array entry changed after upgrade");
+        }
+
+        // Assert minters mapping unchanged
+        for (uint256 i; i < minterCount; i++) {
+            if (mintersPre[i] != address(0)) {
+                assertEq(
+                    frxusd.minters(mintersPre[i]),
+                    mintersMapPre[i],
+                    "// THEN: minters mapping changed after upgrade"
+                );
+            }
+        }
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       Thaw / Unpause Round-Trip (Functional)         <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_freeze_then_thaw_transfer_succeeds() public {
+        _upgradeAndFreeze(al);
+
+        vm.prank(frxusd.owner());
+        frxusd.thaw(al);
+        assertFalse(frxusd.isFrozen(al), "// THEN: al should be thawed");
+
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+        assertEq(frxusd.balanceOf(alice), 100e18, "// THEN: transfer after thaw failed");
+    }
+
+    function test_freezeMany_then_thawMany_transfer_succeeds() public {
+        test_upgrade_and_freezeMany();
+
+        vm.prank(frxusd.owner());
+        frxusd.thawMany(targets);
+
+        assertFalse(frxusd.isFrozen(al), "// THEN: al should be thawed");
+        assertFalse(frxusd.isFrozen(carl), "// THEN: carl should be thawed");
+
+        vm.prank(al);
+        frxusd.transfer(alice, 10e18);
+        assertEq(frxusd.balanceOf(alice), 10e18, "// THEN: transfer after thawMany failed");
+    }
+
+    function test_pause_then_unpause_transfer_succeeds() public {
+        test_upgrade_and_pause_successful();
+
+        vm.prank(frxusd.owner());
+        frxusd.unpause();
+        assertFalse(frxusd.isPaused(), "// THEN: frxusd should be unpaused");
+
+        vm.prank(al);
+        frxusd.transfer(alice, 100e18);
+        assertEq(frxusd.balanceOf(alice), 100e18, "// THEN: transfer after unpause failed");
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       EIP-3009 cancelAuthorization / authState       <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_cancelAuthorization_succeeds() public {
+        _upgradeFrxUSD();
+
+        SigUtils.CancelAuthorization memory cancelAuth = SigUtils.CancelAuthorization({
+            authorizer: al,
+            nonce: eip3009Nonce
+        });
+        bytes32 digest = sigUtils.getCancelAuthorizationTypedDataHash(cancelAuth);
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(alPrivateKey, digest);
+
+        frxusd.cancelAuthorization(al, eip3009Nonce, v, r, s);
+
+        assertTrue(frxusd.authorizationState(al, eip3009Nonce), "// THEN: authorization not canceled");
+    }
+
+    function test_transferWithAuthorization_after_cancel_reverts() public {
+        test_cancelAuthorization_succeeds();
+
+        (uint8 v, bytes32 r, bytes32 s) = _signTransferAuthorization(al, bob, 1e18);
+
+        vm.prank(bob);
+        vm.expectRevert();
+        frxusd.transferWithAuthorization({
+            from: al,
+            to: bob,
+            value: 1e18,
+            validAfter: validAfter,
+            validBefore: validBefore,
+            nonce: eip3009Nonce,
+            v: v,
+            r: r,
+            s: s
+        });
+    }
+
+    function test_authorizationState_default_false() public {
+        _upgradeFrxUSD();
+
+        assertFalse(frxusd.authorizationState(al, bytes32(uint256(999))), "// THEN: unused nonce should be false");
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       Ownership Transfer (nominateNewOwner)          <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_nominateNewOwner_and_acceptOwnership() public {
+        _upgradeFrxUSD();
+
+        address currentOwner = frxusd.owner();
+        address newOwner = address(0x4321);
+
+        vm.prank(currentOwner);
+        frxusd.nominateNewOwner(newOwner);
+        assertEq(frxusd.nominatedOwner(), newOwner, "// THEN: nominated owner not set");
+
+        vm.prank(newOwner);
+        frxusd.acceptOwnership();
+        assertEq(frxusd.owner(), newOwner, "// THEN: ownership not transferred");
+        assertEq(frxusd.nominatedOwner(), address(0), "// THEN: nominated owner not cleared");
+    }
+
+    function test_only_owner_can_nominateNewOwner() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert(bytes4(keccak256("OnlyOwner()")));
+        frxusd.nominateNewOwner(badActor);
+    }
+
+    function test_only_nominated_can_acceptOwnership() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        frxusd.nominateNewOwner(alice);
+
+        vm.prank(badActor);
+        vm.expectRevert(bytes4(keccak256("InvalidOwnershipAcceptance()")));
+        frxusd.acceptOwnership();
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>    Frozen msg.sender (spender) in transferFrom       <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_transferFrom_frozen_spender_reverts() public {
+        _upgradeFrxUSD();
+
+        vm.prank(al);
+        frxusd.approve(bob, 100e18);
+
+        // freeze bob (the spender), al is NOT frozen
+        vm.prank(frxusd.owner());
+        frxusd.freeze(bob);
+
+        // bob tries to transferFrom al to alice — should revert because bob (msg.sender) is frozen
+        vm.prank(bob);
+        vm.expectRevert(bytes4(keccak256("IsFrozen()")));
+        frxusd.transferFrom(al, alice, 50e18);
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       supportsInterface                              <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_supportsInterface() public {
+        _upgradeFrxUSD();
+
+        // IERC165
+        assertTrue(frxusd.supportsInterface(type(IERC165).interfaceId), "// THEN: should support IERC165");
+        // IOptimismMintableERC20
+        assertTrue(
+            frxusd.supportsInterface(type(IOptimismMintableERC20).interfaceId),
+            "// THEN: should support IOptimismMintableERC20"
+        );
+        // ILegacyMintableERC20
+        assertTrue(
+            frxusd.supportsInterface(type(ILegacyMintableERC20).interfaceId),
+            "// THEN: should support ILegacyMintableERC20"
+        );
+        // unsupported interface
+        assertFalse(frxusd.supportsInterface(bytes4(0xdeadbeef)), "// THEN: should not support random interface");
+    }
+
+    /*
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    <*>       setTimelock                                    <*>
+    <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
+    */
+
+    function test_setTimelock_succeeds() public {
+        _upgradeFrxUSD();
+
+        address newTimelock = address(0x7777);
+        vm.prank(frxusd.owner());
+        frxusd.setTimelock(newTimelock);
+
+        assertEq(frxusd.timelock_address(), newTimelock, "// THEN: timelock not updated");
+    }
+
+    function test_setTimelock_only_owner_or_timelock() public {
+        _upgradeFrxUSD();
+
+        vm.prank(badActor);
+        vm.expectRevert("Not owner or timelock");
+        frxusd.setTimelock(badActor);
+    }
+
+    function test_setTimelock_zero_address_reverts() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        vm.expectRevert("Zero address detected");
+        frxusd.setTimelock(address(0));
     }
 
     /*
