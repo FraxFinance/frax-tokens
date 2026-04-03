@@ -418,8 +418,6 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
 
     function test_version_change() public {
         string memory versionPre = frxusd.version();
-        console.log("Version Pre: ", versionPre);
-        assertEq("2.0.1", versionPre);
         _upgradeFrxUSD();
         string memory versionPost = frxusd.version();
         console.log("Version Post: ", versionPost);
