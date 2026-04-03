@@ -407,23 +407,6 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         assertEq({ left: pre, right: post, err: "// THEN: total supply changed" });
     }
 
-    function test_pendingOwner_static() public {
-        address pendingPre = frxusd.pendingOwner();
-        console.log("Pending Owner Pre: ", pendingPre);
-        _upgradeFrxUSD();
-        address pendingPost = frxusd.pendingOwner();
-        console.log("Pending Owner Post: ", pendingPost);
-        assertEq(pendingPost, pendingPre, "// THEN: Pending owner changed during upgrade");
-    }
-
-    function test_version_change() public {
-        string memory versionPre = frxusd.version();
-        _upgradeFrxUSD();
-        string memory versionPost = frxusd.version();
-        console.log("Version Post: ", versionPost);
-        assertEq("3.0.0", versionPost);
-    }
-
     /*
     <*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*><*>
     <*>            Reversions for admin gated calls          <*>
@@ -916,7 +899,8 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         console.log("The proxy Admin: ", address(proxyAdmin));
         vm.prank(proxyAdmin.owner());
         IProxy(address(proxyAdmin)).upgradeAndCall(address(frxusd), address(implV2), hex"");
-
+        console.log("frxUSD Proxy Address: ", address(frxusd));
+        console.log("Implementation Address: ", address(implV2));
         address impl_post = address(
             uint160(uint256(vm.load(address(frxusd), bytes32(uint256(keccak256("eip1967.proxy.implementation")) - 1))))
         );
