@@ -25,8 +25,8 @@ contract FrxUSD_Fraxtal_ProxyRegistry is FraxTest {
             Proxy1967State({
                 name: "frxUSD",
                 proxy: Constants.FraxtalL2.FRXUSD_PROXY,
-                proxyAdmin: 0xfC0000000000000000000000000000000000000a,
-                proxyAdminOwner: Constants.FraxtalL2.FRXUSD_PROXY_ADMIN,
+                proxyAdmin: Constants.FraxtalL2.FRXUSD_PROXY_ADMIN,
+                proxyAdminOwner: Constants.FraxtalL2.FRXUSD_PROXY_ADMIN_OWNER,
                 proxyImplementation: Constants.FraxtalL2.FRXUSD_IMPLEMENTATION,
                 version: "3.0.0"
             })
