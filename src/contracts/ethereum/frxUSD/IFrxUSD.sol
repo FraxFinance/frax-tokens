@@ -4,6 +4,8 @@ import { IFrxUSD2 } from "src/contracts/ethereum/frxUSD/versioning/IFrxUSD2.sol"
 
 interface IFrxUSD is IFrxUSD2 {
     function owner() external view returns (address);
+    function version() external view returns (string memory);
+    function pendingOwner() external view returns (address);
 
     function eip712Domain()
         external

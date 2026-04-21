@@ -1,25 +1,21 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.0;
 
-import { ERC20PermitPermissionedOptiMintable } from "src/contracts/fraxtal/shared/ERC20PermitPermissionedOptiMintable.sol";
+// ====================================================================
+// |     ______                   _______                             |
+// |    / _____________ __  __   / ____(_____  ____ _____  ________   |
+// |   / /_  / ___/ __ `| |/_/  / /_  / / __ \/ __ `/ __ \/ ___/ _ \  |
+// |  / __/ / /  / /_/ _>  <   / __/ / / / / / /_/ / / / / /__/  __/  |
+// | /_/   /_/   \__,_/_/|_|  /_/   /_/_/ /_/\__,_/_/ /_/\___/\___/   |
+// |                                                                  |
+// ====================================================================
+// ============================= FrxUSD ===============================
+// ====================================================================
+// Frax Finance: https://github.com/FraxFinance
+// Tested for 18-decimal underlying assets only
 
-contract SfrxUSD is ERC20PermitPermissionedOptiMintable {
-    /// @param _creator_address The contract creator
-    /// @param _timelock_address The timelock
-    /// @param _bridge Address of the L2 standard bridge
-    /// @param _remoteToken Address of the corresponding L1 token
-    constructor(
-        address _creator_address,
-        address _timelock_address,
-        address _bridge,
-        address _remoteToken
-    )
-        ERC20PermitPermissionedOptiMintable(
-            _creator_address,
-            _timelock_address,
-            _bridge,
-            _remoteToken,
-            "Staked Frax USD",
-            "sfrxUSD"
-        )
-    {}
+import { SfrxUSD2 } from "src/contracts/fraxtal/sfrxUSD/versioning/SfrxUSD2.sol";
+
+contract SfrxUSD is SfrxUSD2 {
+    constructor(address _bridge, address _remoteToken) SfrxUSD2(_bridge, _remoteToken) {}
 }
