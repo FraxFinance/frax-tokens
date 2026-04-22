@@ -1,3 +1,5 @@
+export const CHAIN_ID = 1285;
+
 // Canonicals
 export const FRAX = "0x1A93B23281CC1CDE4C4741353F3064709A16197d";
 export const FXS = "0x6f1D1Ee50846Fcbc3de91723E61cb68CFa6D0E98";
