@@ -18,6 +18,7 @@ interface IFrxUSD is IERC20PermitPermissionedOptiMintable {
     function burnFrxUsd(address _owner, uint256 _amount) external;
     function pause() external;
     function unpause() external;
+    function version() external view returns (string memory);
 
     /// @dev events
     event Paused();

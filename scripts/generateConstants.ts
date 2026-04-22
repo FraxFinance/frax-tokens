@@ -1,132 +1,106 @@
 import * as fs from "fs/promises";
 import path from "path";
+import { utils } from "ethers";
+const { getAddress } = utils;
 
 import * as constants from "./constants";
 
-const networkPrefixes = {
+const networkPrefixes: Record<string, string> = {
   Abstract: "ABS",
   Aptos: "APT",
   Arbitrum: "ARBI",
   Aurora: "AUR",
   Avalanche: "AVAX",
-  BASE: "BASE",
-  BERA: "BERA",
-  BLAST: "BLAST",
+  Base: "BASE",
+  Bera: "BERA",
+  Blast: "BLAST",
   BSC: "BSC",
   Ethereum: "ETH",
   Fantom: "FTM",
   FraxtalL1Devnet: "FXTL_L1_DN",
-  FraxtalL2Devnet: "FXTL_L2_DN",
   FraxtalL2: "FXTL",
+  FraxtalL2Devnet: "FXTL_L2_DN",
   FraxtalTestnetL1: "FXTL_TN_L1",
   FraxtalTestnetL2: "FXTL_TN_L2",
   Holesky: "HOLESKY",
   Hyperliquid: "HYPE",
+  Ink: "INK",
   Katana: "KTN",
+  Linea: "LINEA",
   Mainnet: "ETH",
+  Mode: "MODE",
   Moonbeam: "MNBM",
   Moonriver: "MOVR",
   Optimism: "OPTI",
+  Plumephoenix: "PLUME",
   Polygon: "POLY",
   PolygonzkEVM: "POLY_ZKEVM",
   Scroll: "SCROLL",
-  Sei: "SEI",
   Solana: "SOL",
   Sonic: "SONIC",
   Unichain: "UNI",
   Worldchain: "WRLD",
-  Linea: "LINEA",
-  Zksync:"ZKSYNC"
+  XLayer: "XLYR",
+  ZkSync: "ZKSYNC",
 };
 
-const REMOVE_DUPLICATE_LABELS = false;
-
 async function main() {
-  // Get all the network names
   const networks = Object.keys(constants);
+  const outputStrings = networks.map((networkName) => {
+    return handleSingleNetwork(networkName, constants[networkName]);
+  });
 
-  // Prepare seen/duplicate values
-  const seenValues = [];
-
-  // Generate the files
-  for (let n = 0; n < networks.length; n++) {
-    const networkName = networks[n];
-    const outputString = await handleSingleNetwork(networkName, constants[networkName], seenValues);
-
-    const finalString =
-      `// SPDX-License-Identifier: ISC
+  const finalString =
+    `// SPDX-License-Identifier: ISC
 pragma solidity >=0.8.0;
 
 // **NOTE** Generated code, do not modify.  Run 'npm run generate:constants'.
 
 import { TestBase } from "forge-std/Test.sol";
 
-	` + outputString;
-    await fs.writeFile(path.resolve("src/contracts/chain-constants", `${networkName}.sol`), finalString);
-  }
+` + outputStrings.join("\n");
+
+  await fs.writeFile(path.resolve("src", "Constants.sol"), finalString);
 }
 
-async function handleSingleNetwork(networkName, constants, seenValues) {
-  let numberValues: any[] = [];
-  const constantString = Object.entries(constants)
+function handleSingleNetwork(networkName: string, networkConstants: Record<string, unknown>): string {
+  const numberValues: unknown[] = [];
+
+  const isAddress = (v: string) => v.startsWith("0x") && v.length === 42;
+  const isBytes32 = (v: string) => v.startsWith("0x") && v.length > 42;
+
+  const constantString = Object.entries(networkConstants)
     .map(([key, value]) => {
       if (typeof value === "string") {
-        // Determine whether it is an address or a string
-        if (value.startsWith("0x")) {
-          return `    address internal constant ${key} = ${value};`;
+        if (isAddress(value)) {
+          return `    address internal constant ${key} = ${getAddress(value)};`;
+        }
+        if (isBytes32(value)) {
+          return `    bytes32 internal constant ${key} = ${value};`;
         }
         return `    string internal constant ${key} = "${value}";`;
       } else {
-        // number
-
-        // Note the value is a number
         numberValues.push(value);
-
         return `    uint256 internal constant ${key} = ${value};`;
       }
     })
     .join("\n");
 
-  // Remove certain values from being labeled
-  let constantsToLabel = {};
-  Object.entries(constants).forEach(([key, value]) => {
-    // Check if the value has been labeled already
-    const alreadySeen = REMOVE_DUPLICATE_LABELS ? seenValues.includes(value) : false;
+  const prefix = networkPrefixes[networkName] ?? networkName.toUpperCase();
 
-    // Check if the value is a number
-    const isANumber = numberValues.includes(value);
-
-    // Check for rejects
-    if (alreadySeen) {
-      // Do not label already-seen addresses (optional)
-      console.log(`Removing duplicate value ${value}`);
-    } else if (isANumber) {
-      // Do not label numbers
-      console.log(`Removing number value ${value}`);
-    } else {
-      // Otherwise, it can be labeled
-      constantsToLabel[key] = value;
-    }
-  });
-
-  // Generate the labels for the entries
-  const labelStrings = Object.entries(constantsToLabel)
+  const labelStrings = Object.entries(networkConstants)
+    .filter(([, value]) => typeof value === "string" && isAddress(value as string))
     .map(([key, value]) => {
-      // Add the value to the seen list
-      seenValues.push(value);
-
-      // Return the string
-      return `        vm.label(${value}, "Constants.${networkPrefixes[networkName]}_${key}");`;
+      return `        vm.label(${getAddress(value as string)}, "Constants.${prefix}_${key}");`;
     })
     .join("\n");
-  const contractString = `library ${networkName} {
+
+  const libraryString = `library ${networkName} {
 ${constantString}
 }
 `;
 
-  // if (networkName == "Mainnet") {
-  const constantsHelper = `
-abstract contract AddressHelper${networkName} is TestBase {
+  const helperString = `abstract contract AddressHelper${networkName} is TestBase {
     constructor() {
         labelConstants();
     }
@@ -136,9 +110,8 @@ ${labelStrings}
     }
 }
 `;
-  return contractString + constantsHelper;
-  // }
-  // return contractString;
+
+  return libraryString + "\n" + helperString;
 }
 
 main();
