@@ -21,6 +21,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
     address carl = address(0xca71);
     address alice = address(0xa11ce);
     address badActor = address(0xbadbeef);
+    address timelockAddr = address(0x71E10c);
 
     address[] targets;
     uint256[] amounts;
@@ -42,7 +43,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         // implV2 = IFrxUSD(address(new FrxUSD(address(Constants.Mainnet.COMPTROLLER_MULTISIG), "Frax USD", "frxUSD")));
 
         // implV2 = IFrxUSD(address(new FrxUSD()));
-        implV2 = IFrxUSD(0x0000000048D2c8baf31742f6765383278BAda4d5);
+        implV2 = IFrxUSD(0x5c19D7C2838769ED3c5a1E506600940e62fF901F);
 
         deal(address(frxusd), al, 5000e18);
         deal(address(frxusd), bob, 15e18);
@@ -890,6 +891,16 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
         (v, r, s) = vm.sign(alPrivateKey, sigUtils.getReceiveWithAuthorizationTypedDataHash(authorization));
     }
 
+    /// @dev Bootstraps the timelock the first time it's needed, then adds the minter via the timelock.
+    function _addMinter(address minter) internal {
+        if (FrxUSD(address(frxusd)).timelock() == address(0)) {
+            vm.prank(frxusd.owner());
+            FrxUSD(address(frxusd)).setTimelock(timelockAddr);
+        }
+        vm.prank(timelockAddr);
+        FrxUSD(address(frxusd)).addMinter(minter);
+    }
+
     function _upgradeFrxUSD() internal {
         address admin = address(
             uint160(uint256(vm.load(address(frxusd), bytes32(uint256(keccak256("eip1967.proxy.admin")) - 1))))
@@ -1086,25 +1097,67 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
     function test_addMinter_successful() public {
         _upgradeFrxUSD();
 
-        vm.prank(frxusd.owner());
-        FrxUSD(address(frxusd)).addMinter(carl);
+        _addMinter(carl);
 
         assertTrue(FrxUSD(address(frxusd)).minters(carl), "// THEN: carl should be a minter");
     }
 
-    function test_only_owner_can_addMinter() public {
+    function test_only_timelock_can_addMinter() public {
         _upgradeFrxUSD();
 
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).setTimelock(timelockAddr);
+
         vm.prank(badActor);
-        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
+        vm.expectRevert("Only timelock can add minters");
         FrxUSD(address(frxusd)).addMinter(carl);
+    }
+
+    function test_addMinter_reverts_before_timelock_set() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        vm.expectRevert("Only timelock can add minters");
+        FrxUSD(address(frxusd)).addMinter(carl);
+    }
+
+    function test_setTimelock_owner_bootstrap() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).setTimelock(timelockAddr);
+
+        assertEq(FrxUSD(address(frxusd)).timelock(), timelockAddr, "// THEN: timelock not set");
+    }
+
+    function test_setTimelock_rotated_by_timelock() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).setTimelock(timelockAddr);
+
+        address newTimelock = address(0x71E10c2);
+        vm.prank(timelockAddr);
+        FrxUSD(address(frxusd)).setTimelock(newTimelock);
+
+        assertEq(FrxUSD(address(frxusd)).timelock(), newTimelock, "// THEN: timelock not rotated");
+    }
+
+    function test_owner_cannot_change_timelock_after_set() public {
+        _upgradeFrxUSD();
+
+        vm.prank(frxusd.owner());
+        FrxUSD(address(frxusd)).setTimelock(timelockAddr);
+
+        vm.prank(frxusd.owner());
+        vm.expectRevert("Only owner can set timelock");
+        FrxUSD(address(frxusd)).setTimelock(address(0xbeef));
     }
 
     function test_removeMinter_successful() public {
         _upgradeFrxUSD();
 
-        vm.prank(frxusd.owner());
-        FrxUSD(address(frxusd)).addMinter(carl);
+        _addMinter(carl);
 
         vm.prank(frxusd.owner());
         FrxUSD(address(frxusd)).removeMinter(carl);
@@ -1115,8 +1168,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
     function test_only_owner_can_removeMinter() public {
         _upgradeFrxUSD();
 
-        vm.prank(frxusd.owner());
-        FrxUSD(address(frxusd)).addMinter(carl);
+        _addMinter(carl);
 
         vm.prank(badActor);
         vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", badActor));
@@ -1126,8 +1178,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
     function test_minter_can_mint() public {
         _upgradeFrxUSD();
 
-        vm.prank(frxusd.owner());
-        FrxUSD(address(frxusd)).addMinter(carl);
+        _addMinter(carl);
 
         uint256 supplyBefore = frxusd.totalSupply();
 
@@ -1153,8 +1204,7 @@ contract FrxUSD_Mainnet_Compliance is FraxTest {
     function test_minter_can_burn_from() public {
         _upgradeFrxUSD();
 
-        vm.prank(frxusd.owner());
-        FrxUSD(address(frxusd)).addMinter(carl);
+        _addMinter(carl);
 
         vm.prank(al);
         frxusd.approve(carl, 500e18);

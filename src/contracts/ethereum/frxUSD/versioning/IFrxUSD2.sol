@@ -14,6 +14,7 @@ interface IFrxUSD2 is IFrxUSD1 {
     function burn(address _owner, uint256 _amount) external;
     function pause() external;
     function unpause() external;
+    function setTimelock(address _timelock) external;
 
     event Paused();
     event Unpaused();

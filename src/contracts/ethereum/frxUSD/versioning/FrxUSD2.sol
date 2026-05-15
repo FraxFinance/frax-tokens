@@ -27,8 +27,11 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
 
     mapping(address => bool) public isFreezer;
 
+    /// @notice Timelock for adding minters
+    address public timelock;
+
     function version() public pure virtual returns (string memory) {
-        return "2.0.1";
+        return "3.0.1";
     }
 
     /* ========== CONSTRUCTOR ========== */
@@ -68,9 +71,20 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     }
 
     /* ========== RESTRICTED FUNCTIONS [OWNER] ========== */
+
+    /// @notice Sets the timelock address. Can only be set by the owner, and only if the timelock has not been set before. Once set, only the timelock can change the timelock address.
+    /// @param _timelock The address of the new timelock
+    function setTimelock(address _timelock) external {
+        require(msg.sender == timelock || (timelock == address(0) && msg.sender == owner()), "Only owner can set timelock");
+        require(_timelock != address(0), "Zero address detected");
+        emit TimelockChanged(timelock, _timelock);
+        timelock = _timelock;
+    }
+
     /// @notice Adds a minter
     /// @param minter_address Address of minter to add
-    function addMinter(address minter_address) public onlyOwner {
+    function addMinter(address minter_address) public {
+        require (msg.sender == timelock, "Only timelock can add minters");
         require(minter_address != address(0), "Zero address detected");
 
         require(minters[minter_address] == false, "Address already exists");
@@ -264,6 +278,11 @@ contract FrxUSD2 is ERC20Permit, ERC20Burnable, Ownable2Step {
     /// @notice Event Emitted when an address is removed as a freezer
     /// @param account The account being removed as a freezer
     event RemoveFreezer(address account);
+
+    /// @notice Event Emitted when the timelock address is changed
+    /// @param oldTimelock The previous timelock address
+    /// @param newTimelock The new timelock address
+    event TimelockChanged(address oldTimelock, address newTimelock);
 
     /* ========== ERRORS ========== */
     error ArrayMisMatch();
