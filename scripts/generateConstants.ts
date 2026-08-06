@@ -31,6 +31,7 @@ const networkPrefixes: Record<string, string> = {
   Mode: "MODE",
   Moonbeam: "MNBM",
   Moonriver: "MOVR",
+  Movement: "MOVE",
   Optimism: "OPTI",
   Plumephoenix: "PLUME",
   Polygon: "POLY",
